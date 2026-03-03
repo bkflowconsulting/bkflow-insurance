@@ -1,0 +1,3147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BKflow — Insurance Growth System</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================== */
+/*  CSS VARIABLES & RESET         */
+/* ============================== */
+:root {
+  --bg-primary: #0a0e17;
+  --bg-secondary: #0f1520;
+  --bg-card: #131a2a;
+  --bg-card-hover: #182035;
+  --border-card: #1a2540;
+  --cyan: #00d4ff;
+  --cyan-dim: #00a8cc;
+  --green: #00e676;
+  --green-dim: #00c853;
+  --blue: #1a73e8;
+  --text-primary: #e8edf5;
+  --text-secondary: #8892a8;
+  --text-muted: #5a6478;
+  --gradient-cyan: linear-gradient(135deg, #00d4ff, #0088cc);
+  --gradient-green: linear-gradient(135deg, #00e676, #00c853);
+  --gradient-hero: linear-gradient(160deg, #0a0e17 0%, #0d1525 40%, #0a1a2e 70%, #0a0e17 100%);
+  --shadow-glow-cyan: 0 0 30px rgba(0,212,255,0.15);
+  --shadow-glow-green: 0 0 30px rgba(0,230,118,0.15);
+  --radius: 12px;
+  --radius-lg: 20px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+button { cursor: pointer; border: none; font-family: inherit; }
+
+.page { display: none !important; }
+.page.active { display: block !important; }
+
+/* ============================== */
+/*  NOISE TEXTURE OVERLAY         */
+/* ============================== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================== */
+/*  NAVIGATION                    */
+/* ============================== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 0 40px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10, 14, 23, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: var(--transition);
+}
+
+.navbar.scrolled {
+  background: rgba(10, 14, 23, 0.95);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -0.5px;
+  cursor: pointer;
+}
+
+.nav-logo .logo-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--gradient-cyan);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 0.85rem;
+  color: var(--bg-primary);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.nav-link {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: var(--transition);
+  cursor: pointer;
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--cyan);
+  transition: var(--transition);
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--text-primary);
+}
+
+.nav-link:hover::after, .nav-link.active::after {
+  width: 100%;
+}
+
+.nav-cta {
+  padding: 10px 24px;
+  background: var(--gradient-cyan);
+  color: var(--bg-primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.nav-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0,212,255,0.3);
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.hamburger span {
+  width: 24px;
+  height: 2px;
+  background: var(--text-primary);
+  transition: var(--transition);
+}
+
+/* ============================== */
+/*  UTILITIES                     */
+/* ============================== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section {
+  padding: 120px 0;
+  position: relative;
+  z-index: 1;
+}
+
+.section-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--cyan);
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 20px;
+  letter-spacing: -1px;
+}
+
+.section-title .highlight {
+  background: var(--gradient-cyan);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-title .highlight-green {
+  background: var(--gradient-green);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 640px;
+  line-height: 1.7;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: var(--gradient-cyan);
+  color: var(--bg-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  transition: var(--transition);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,212,255,0.3);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: transparent;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  transition: var(--transition);
+}
+
+.btn-secondary:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  transform: translateY(-2px);
+}
+
+.btn-green {
+  background: var(--gradient-green);
+}
+
+.btn-green:hover {
+  box-shadow: 0 8px 30px rgba(0,230,118,0.3);
+}
+
+.text-center { text-align: center; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+
+/* ============================== */
+/*  HERO SECTION                  */
+/* ============================== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 72px;
+  background: var(--gradient-hero);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%);
+  top: -100px;
+  right: -200px;
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(0,230,118,0.06) 0%, transparent 70%);
+  bottom: -100px;
+  left: -100px;
+  pointer-events: none;
+}
+
+.hero-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.2);
+  border-radius: 100px;
+  font-size: 0.8rem;
+  color: var(--cyan);
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+.hero-badge .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 5vw, 3.8rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+}
+
+.hero p {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 36px;
+  max-width: 520px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hero-visual {
+  position: relative;
+}
+
+.hero-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.hero-stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.hero-stat-card:hover {
+  border-color: rgba(0,212,255,0.3);
+  transform: translateY(-2px);
+}
+
+.hero-stat-card:nth-child(1) { animation: fade-up 0.6s ease both; animation-delay: 0.2s; }
+.hero-stat-card:nth-child(2) { animation: fade-up 0.6s ease both; animation-delay: 0.35s; }
+.hero-stat-card:nth-child(3) { animation: fade-up 0.6s ease both; animation-delay: 0.5s; }
+.hero-stat-card:nth-child(4) { animation: fade-up 0.6s ease both; animation-delay: 0.65s; }
+
+.hero-stat-number {
+  font-size: 2rem;
+  font-weight: 800;
+  background: var(--gradient-cyan);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 4px;
+}
+
+.hero-stat-card:nth-child(even) .hero-stat-number {
+  background: var(--gradient-green);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-stat-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================== */
+/*  PROBLEMS SECTION              */
+/* ============================== */
+.problems-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 60px;
+}
+
+.problem-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.problem-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.problem-card:hover {
+  border-color: rgba(0,212,255,0.2);
+  transform: translateY(-4px);
+}
+
+.problem-card:hover::before { opacity: 1; }
+
+.problem-number {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.problem-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.problem-card p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.problem-result {
+  font-size: 0.85rem;
+  color: var(--cyan);
+  font-weight: 500;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ============================== */
+/*  CASE STUDY SECTION            */
+/* ============================== */
+.case-study {
+  background: var(--bg-secondary);
+  border-top: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.case-study-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  margin-top: 48px;
+}
+
+.case-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.case-metric {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+}
+
+.case-metric-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.case-metric-value.cyan {
+  color: var(--cyan);
+}
+
+.case-metric-value.green {
+  color: var(--green);
+}
+
+.case-metric-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.case-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 32px;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  background: var(--cyan);
+  border-radius: 50%;
+  margin-top: 7px;
+  position: relative;
+}
+
+.timeline-dot::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 4px;
+  width: 2px;
+  height: 36px;
+  background: rgba(0,212,255,0.15);
+}
+
+.timeline-item:last-child .timeline-dot::after { display: none; }
+
+.timeline-day {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+
+.timeline-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* ============================== */
+/*  PHASES / SERVICES SECTION     */
+/* ============================== */
+.phases-section {
+  counter-reset: phase-counter;
+}
+
+.phase-block {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 60px;
+  padding: 80px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  align-items: start;
+}
+
+.phase-block:last-child { border-bottom: none; }
+
+.phase-header {
+  position: sticky;
+  top: 100px;
+}
+
+.phase-number {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 12px;
+}
+
+.phase-header h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.phase-header p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.phase-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.phase-feature {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: var(--transition);
+}
+
+.phase-feature:hover {
+  border-color: rgba(0,212,255,0.2);
+  transform: translateY(-2px);
+}
+
+.phase-feature-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(0,212,255,0.08);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  font-size: 1.1rem;
+}
+
+.phase-feature h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.phase-feature p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Demo CTA */
+.demo-banner {
+  margin-top: 24px;
+  padding: 20px 28px;
+  background: rgba(0,230,118,0.06);
+  border: 1px solid rgba(0,230,118,0.2);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.demo-banner p {
+  font-size: 0.9rem;
+  color: var(--green);
+  font-weight: 500;
+}
+
+.demo-banner .btn-primary {
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* ============================== */
+/*  INTERACTIVE DEMOS SECTION     */
+/* ============================== */
+.demos-section {
+  background: var(--bg-secondary);
+  border-top: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.demos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 60px;
+}
+
+.demo-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.demo-card:hover {
+  border-color: rgba(0,212,255,0.3);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.demo-card-visual {
+  height: 200px;
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(0,212,255,0.05) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.demo-card-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 120%, rgba(0,212,255,0.12) 0%, transparent 60%);
+}
+
+.demo-play-icon {
+  width: 60px;
+  height: 60px;
+  background: rgba(0,212,255,0.15);
+  border: 2px solid var(--cyan);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--cyan);
+  position: relative;
+  z-index: 2;
+  transition: var(--transition);
+}
+
+.demo-card:hover .demo-play-icon {
+  background: var(--cyan);
+  color: var(--bg-primary);
+  transform: scale(1.1);
+}
+
+.demo-card-body {
+  padding: 28px;
+}
+
+.demo-card-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 8px;
+}
+
+.demo-card-body h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.demo-card-body p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.demo-flow {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: rgba(0,230,118,0.05);
+  border: 1px solid rgba(0,230,118,0.15);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: var(--green);
+  font-family: 'Space Mono', monospace;
+  line-height: 1.5;
+}
+
+/* ============================== */
+/*  COMPARISON / ROI SECTION      */
+/* ============================== */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 60px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.comparison-card {
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  text-align: center;
+}
+
+.comparison-card.before {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+}
+
+.comparison-card.after {
+  background: var(--bg-card);
+  border: 2px solid var(--cyan);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.comparison-card-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.comparison-card.before .comparison-card-label { color: var(--text-muted); }
+.comparison-card.after .comparison-card-label { color: var(--cyan); }
+
+.comparison-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.comparison-row:last-child { border-bottom: none; }
+
+.comparison-row-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.comparison-row-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.comparison-card.after .comparison-row-value {
+  color: var(--cyan);
+}
+
+/* ============================== */
+/*  GUARANTEE SECTION             */
+/* ============================== */
+.guarantee-card {
+  max-width: 800px;
+  margin: 60px auto 0;
+  background: var(--bg-card);
+  border: 2px solid rgba(0,230,118,0.3);
+  border-radius: var(--radius-lg);
+  padding: 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.guarantee-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0,230,118,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.guarantee-icon {
+  width: 64px;
+  height: 64px;
+  background: rgba(0,230,118,0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin: 0 auto 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.guarantee-card h3 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 2;
+}
+
+.guarantee-card p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  position: relative;
+  z-index: 2;
+}
+
+/* ============================== */
+/*  PRICING SECTION               */
+/* ============================== */
+.pricing-card {
+  max-width: 720px;
+  margin: 60px auto 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.pricing-card-header {
+  padding: 40px 48px 32px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.pricing-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(0,212,255,0.1);
+  border: 1px solid rgba(0,212,255,0.2);
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+.pricing-card-header h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 28px;
+}
+
+.pricing-amounts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.pricing-amount-box {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+}
+
+.pricing-amount-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--cyan);
+}
+
+.pricing-amount-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.pricing-card-body {
+  padding: 36px 48px;
+}
+
+.pricing-features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.pricing-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.pricing-feature .check {
+  color: var(--green);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.pricing-card-footer {
+  padding: 24px 48px 40px;
+  text-align: center;
+}
+
+.pricing-note {
+  margin-top: 16px;
+  padding: 14px;
+  background: rgba(0,230,118,0.06);
+  border: 1px solid rgba(0,230,118,0.15);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--green);
+  font-weight: 500;
+}
+
+/* ============================== */
+/*  ABOUT PAGE                    */
+/* ============================== */
+.about-hero {
+  padding-top: 160px;
+  padding-bottom: 80px;
+  text-align: center;
+  background: var(--gradient-hero);
+  position: relative;
+}
+
+.about-hero::before {
+  content: '';
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+}
+
+.about-values {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 60px;
+}
+
+.value-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.value-card:hover {
+  border-color: rgba(0,212,255,0.2);
+  transform: translateY(-4px);
+}
+
+.value-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(0,212,255,0.08);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin: 0 auto 20px;
+}
+
+.value-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.value-card p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.about-story {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  margin-top: 60px;
+}
+
+.about-story-text h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.about-story-text p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.about-stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius);
+  padding: 28px;
+  text-align: center;
+}
+
+.about-stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--cyan);
+}
+
+.about-stat-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* ============================== */
+/*  CONTACT PAGE                  */
+/* ============================== */
+.contact-hero {
+  padding-top: 160px;
+  padding-bottom: 80px;
+  text-align: center;
+  background: var(--gradient-hero);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  margin-top: 60px;
+}
+
+.contact-form-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  transition: var(--transition);
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-group select option {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.contact-info-side {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.contact-info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: var(--transition);
+}
+
+.contact-info-card:hover {
+  border-color: rgba(0,212,255,0.2);
+}
+
+.contact-info-icon {
+  width: 44px;
+  height: 44px;
+  background: rgba(0,212,255,0.08);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  margin-bottom: 14px;
+}
+
+.contact-info-card h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.contact-info-card p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.contact-faq {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius);
+  padding: 28px;
+}
+
+.contact-faq h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--cyan);
+}
+
+.faq-item {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  cursor: pointer;
+}
+
+.faq-item:last-child { border-bottom: none; }
+
+.faq-question {
+  font-size: 0.88rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.faq-question .arrow {
+  transition: var(--transition);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.faq-item.open .faq-question .arrow {
+  transform: rotate(180deg);
+  color: var(--cyan);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.faq-item.open .faq-answer {
+  max-height: 200px;
+  padding-top: 10px;
+}
+
+.faq-answer p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ============================== */
+/*  TESTIMONIALS PAGE              */
+/* ============================== */
+.testimonials-hero {
+  padding-top: 160px;
+  padding-bottom: 80px;
+  text-align: center;
+  background: var(--gradient-hero);
+  position: relative;
+}
+
+.testimonials-hero::before {
+  content: '';
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0,230,118,0.06) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+}
+
+.testimonial-featured {
+  max-width: 900px;
+  margin: 60px auto 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+}
+
+.testimonial-featured::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-green);
+}
+
+.testimonial-featured-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.testimonial-featured-content {
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.testimonial-quote-mark {
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--cyan);
+  opacity: 0.4;
+  margin-bottom: 8px;
+}
+
+.testimonial-featured-text {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.testimonial-avatar {
+  width: 48px;
+  height: 48px;
+  background: rgba(0,212,255,0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.testimonial-author-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.testimonial-author-role {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.testimonial-featured-metrics {
+  background: rgba(0,212,255,0.03);
+  border-left: 1px solid rgba(255,255,255,0.04);
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.testimonial-metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.testimonial-metric-row:last-child { border-bottom: none; }
+
+.testimonial-metric-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.testimonial-metric-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--cyan);
+}
+
+.testimonial-metric-value.green { color: var(--green); }
+
+.testimonial-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(0,230,118,0.08);
+  border: 1px solid rgba(0,230,118,0.2);
+  border-radius: 100px;
+  font-size: 0.75rem;
+  color: var(--green);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .testimonial-featured-inner { grid-template-columns: 1fr; }
+  .testimonial-featured-content { padding: 32px; }
+  .testimonial-featured-metrics { padding: 32px; border-left: none; border-top: 1px solid rgba(255,255,255,0.04); }
+  .demos-grid { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .demos-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ============================== */
+/*  CTA SECTION                   */
+/* ============================== */
+.cta-section {
+  background: var(--bg-secondary);
+  text-align: center;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+.cta-section .section-title {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+/* ============================== */
+/*  FOOTER                        */
+/* ============================== */
+.footer {
+  padding: 60px 0 32px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.footer-brand p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-top: 12px;
+  max-width: 300px;
+}
+
+.footer-col h4 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.footer-col a {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  padding: 4px 0;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.footer-col a:hover {
+  color: var(--cyan);
+}
+
+.footer-bottom {
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ============================== */
+/*  MODAL (for demos)             */
+/* ============================== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  max-width: 700px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 48px;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.modal-close:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--text-primary);
+}
+
+/* ============================== */
+/*  DEMO — IMMERSIVE PHONE STYLE  */
+/* ============================== */
+.demo-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 28px;
+  align-items: start;
+  margin-top: 20px;
+}
+
+.demo-phone {
+  background: #080d17;
+  border-radius: 28px;
+  border: 2px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(0,212,255,0.06);
+}
+
+.demo-phone-notch {
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.demo-phone-notch::after {
+  content: '';
+  width: 60px;
+  height: 4px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 10px;
+}
+
+.demo-phone-header {
+  padding: 9px 16px;
+  background: rgba(0,212,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.demo-phone-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--gradient-cyan);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem; font-weight: 700; color: var(--bg-primary);
+  flex-shrink: 0;
+}
+
+.demo-phone-name { font-size: 0.78rem; font-weight: 600; }
+.demo-phone-status { font-size: 0.6rem; color: var(--green); }
+
+.demo-phone-body {
+  padding: 12px;
+  min-height: 330px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* Chat bubbles */
+.demo-b {
+  max-width: 86%;
+  padding: 9px 13px;
+  border-radius: 16px;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  opacity: 0;
+  transform: translateY(10px) scale(0.97);
+  animation: bIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+
+@keyframes bIn { to { opacity:1; transform:translateY(0) scale(1); } }
+
+.demo-b.sys {
+  align-self: center;
+  background: rgba(0,212,255,0.05);
+  border: 1px solid rgba(0,212,255,0.1);
+  color: var(--text-muted);
+  border-radius: 8px;
+  font-size: 0.68rem;
+  text-align: center;
+  max-width: 94%;
+  padding: 7px 11px;
+}
+
+.demo-b.out {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #00b8d9, #0088cc);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+  font-weight: 500;
+}
+
+.demo-b.inc {
+  align-self: flex-start;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.07);
+  color: var(--text-primary);
+  border-bottom-left-radius: 4px;
+}
+
+.demo-b.ok {
+  align-self: center;
+  background: rgba(0,230,118,0.07);
+  border: 1px solid rgba(0,230,118,0.18);
+  color: var(--green);
+  text-align: center;
+  max-width: 94%;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.76rem;
+  padding: 9px 13px;
+}
+
+.demo-b .btime {
+  font-size: 0.56rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  opacity: 0.55;
+}
+
+.demo-b.out .btime { text-align: right; color: rgba(255,255,255,0.4); }
+
+/* Typing dots */
+.demo-typing {
+  display: flex; gap: 4px;
+  padding: 9px 13px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 16px; border-bottom-left-radius: 4px;
+  align-self: flex-start;
+  opacity: 0;
+  animation: bIn 0.3s ease forwards;
+}
+
+.demo-typing span {
+  width: 5px; height: 5px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  animation: tDot 1.4s infinite;
+}
+.demo-typing span:nth-child(2) { animation-delay: 0.2s; }
+.demo-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes tDot {
+  0%,60%,100% { opacity:0.3; transform:translateY(0); }
+  30% { opacity:1; transform:translateY(-3px); }
+}
+
+/* Result banner */
+.demo-result {
+  padding: 11px 16px;
+  background: linear-gradient(135deg, rgba(0,230,118,0.08), rgba(0,212,255,0.06));
+  border-top: 1px solid rgba(0,230,118,0.12);
+  text-align: center;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--green);
+  opacity: 0;
+  animation: bIn 0.6s ease forwards;
+}
+
+/* System log (right side) */
+.demo-log {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.demo-log-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.66rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-bottom: 7px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.demo-le {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 9px;
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  opacity: 0;
+  transform: translateX(10px);
+  animation: lIn 0.5s ease forwards;
+}
+
+@keyframes lIn { to { opacity:1; transform:translateX(0); } }
+
+.demo-le .ld {
+  width: 7px; height: 7px; min-width: 7px;
+  border-radius: 50%;
+  background: var(--cyan);
+  margin-top: 5px;
+}
+.demo-le.gl .ld { background: var(--green); }
+.demo-le strong { color: var(--text-primary); }
+
+.demo-le .lt {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Wide modal for demos */
+.modal-content.dw { max-width: 840px; }
+
+/* Delay utility classes */
+.d1  { animation-delay: 0.5s !important; }
+.d2  { animation-delay: 2.6s !important; }
+.d3  { animation-delay: 4.7s !important; }
+.d4  { animation-delay: 6.8s !important; }
+.d5  { animation-delay: 8.9s !important; }
+.d6  { animation-delay: 11.0s !important; }
+.d7  { animation-delay: 13.1s !important; }
+.d8  { animation-delay: 15.2s !important; }
+.d9  { animation-delay: 17.3s !important; }
+.d10 { animation-delay: 19.4s !important; }
+
+@media (max-width: 768px) {
+  .demo-layout { grid-template-columns: 1fr; }
+  .modal-content.dw { max-width: 100%; padding: 20px; }
+}
+
+/* ============================== */
+/*  RESPONSIVE                    */
+/* ============================== */
+@media (max-width: 1024px) {
+  .hero-content { grid-template-columns: 1fr; gap: 40px; }
+  .hero-visual { max-width: 500px; }
+  .phase-block { grid-template-columns: 1fr; gap: 32px; }
+  .phase-header { position: static; }
+  .about-story { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .navbar { padding: 0 20px; }
+  .nav-links { 
+    display: none;
+    position: fixed;
+    top: 72px;
+    left: 0;
+    right: 0;
+    background: rgba(10,14,23,0.98);
+    flex-direction: column;
+    padding: 24px;
+    gap: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav-links.open { display: flex; }
+  .hamburger { display: flex; }
+  .problems-grid { grid-template-columns: 1fr; }
+  .case-study-content { grid-template-columns: 1fr; }
+  .demos-grid { grid-template-columns: 1fr; }
+  .comparison-grid { grid-template-columns: 1fr; }
+  .phase-features { grid-template-columns: 1fr; }
+  .about-values { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .pricing-amounts { grid-template-columns: 1fr; }
+  .pricing-features-grid { grid-template-columns: 1fr; }
+  .pricing-card-header, .pricing-card-body, .pricing-card-footer { padding-left: 24px; padding-right: 24px; }
+  .hero-stats-grid { grid-template-columns: 1fr 1fr; }
+  .hero-buttons { flex-direction: column; }
+  .cta-buttons { flex-direction: column; align-items: center; }
+  .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+  .demo-banner { flex-direction: column; text-align: center; }
+  .section { padding: 80px 0; }
+}
+
+/* Smooth scroll offset */
+.scroll-target { scroll-margin-top: 80px; }
+</style>
+</head>
+<body>
+
+<!-- ============================== -->
+<!--  NAVIGATION                    -->
+<!-- ============================== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-logo" data-nav="home">
+    <div class="logo-icon">BK</div>
+    BKflow
+  </div>
+  <div class="nav-links" id="navLinks">
+    <span class="nav-link active" data-page="home" data-nav="home">Home</span>
+    <span class="nav-link" data-page="services" data-nav="services">Services</span>
+    <span class="nav-link" data-page="testimonials" data-nav="testimonials">Testimonials</span>
+    <span class="nav-link" data-page="about" data-nav="about">About</span>
+    <span class="nav-link" data-page="contact" data-nav="contact">Contact</span>
+    <span class="nav-cta" data-nav="contact">Book a Call</span>
+  </div>
+  <div class="hamburger" id="hamburger" data-toggle-menu>
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ============================== -->
+<!--  HOME PAGE                     -->
+<!-- ============================== -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div>
+          <div class="hero-badge"><span class="dot"></span> Built for Insurance Agents & Brokers</div>
+          <h1>Stop Losing Leads.<br>Start <span class="highlight">Closing Policies.</span></h1>
+          <p>The all-in-one lead generation and automation system that reactivates your old leads, runs Meta ads on autopilot, and books appointments — so you close more policies without chasing prospects.</p>
+          <div class="hero-buttons">
+            <span class="btn-primary" data-nav="contact">Book Your Strategy Call &rarr;</span>
+            <span class="btn-secondary" data-demo="reactivation">See It In Action &#9654;</span>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-stats-grid">
+            <div class="hero-stat-card">
+              <div class="hero-stat-number">&lt;60s</div>
+              <div class="hero-stat-label">Speed-to-Lead Response</div>
+            </div>
+            <div class="hero-stat-card">
+              <div class="hero-stat-number">24/7</div>
+              <div class="hero-stat-label">Automated Follow-Up</div>
+            </div>
+            <div class="hero-stat-card">
+              <div class="hero-stat-number">4</div>
+              <div class="hero-stat-label">Growth Phases on Autopilot</div>
+            </div>
+            <div class="hero-stat-card">
+              <div class="hero-stat-number">100%</div>
+              <div class="hero-stat-label">Meta Ads Compliant</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEMS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-label">The Problem</div>
+      <div class="section-title">Why Most Agents <span class="highlight">Struggle to Grow</span></div>
+      <div class="section-subtitle">These are the 3 biggest things holding insurance agents back from scaling their book of business.</div>
+      <div class="problems-grid">
+        <div class="problem-card">
+          <div class="problem-number">Problem 01</div>
+          <h3>Leads Collecting Dust</h3>
+          <p>Old leads sitting in spreadsheets and CRMs — people who showed interest but never got proper follow-up. That's revenue you already paid for, just sitting on the table.</p>
+          <div class="problem-result">&rarr; Untouched revenue waiting to be activated</div>
+        </div>
+        <div class="problem-card">
+          <div class="problem-number">Problem 02</div>
+          <h3>Paying for Shared Leads</h3>
+          <p>Lead vendors sell the same contact to 5+ agents. By the time you call, they've already spoken to 3 competitors. You're losing before the conversation starts.</p>
+          <div class="problem-result">&rarr; Wasted budget, dead conversations</div>
+        </div>
+        <div class="problem-card">
+          <div class="problem-number">Problem 03</div>
+          <h3>No Speed-to-Lead</h3>
+          <p>Between calls, paperwork, and life — leads go hours without hearing from you. They don't wait. They close with whoever responds first.</p>
+          <div class="problem-result">&rarr; Warm prospects closing with someone faster</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE STUDY -->
+  <section class="section case-study" id="case-study">
+    <div class="container">
+      <div class="section-label">Real Results</div>
+      <div class="section-title">12+ Appointments in 2 Weeks — <span class="highlight-green">$0 Ad Spend</span></div>
+      <div class="section-subtitle">Before we ran a single ad, here's what happened when we built this system for a real insurance agent.</div>
+      <div class="case-study-content">
+        <div>
+          <div class="case-metrics">
+            <div class="case-metric">
+              <div class="case-metric-value cyan">12+</div>
+              <div class="case-metric-label">Appointments Booked</div>
+            </div>
+            <div class="case-metric">
+              <div class="case-metric-value green">5+</div>
+              <div class="case-metric-label">Policies Closed</div>
+            </div>
+            <div class="case-metric">
+              <div class="case-metric-value cyan">$12K+</div>
+              <div class="case-metric-label">Total Policy Profit</div>
+            </div>
+            <div class="case-metric">
+              <div class="case-metric-value green">6X</div>
+              <div class="case-metric-label">Return on Investment</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="margin-bottom: 20px; padding: 16px; background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.15); border-radius: 10px;">
+            <div style="font-weight: 600; margin-bottom: 4px;">Heather — Life Insurance Agent</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">Had ~2,500 old leads sitting in a spreadsheet collecting dust</div>
+          </div>
+          <div class="case-timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div>
+                <div class="timeline-day">Day 1</div>
+                <div class="timeline-text">Imported 2,500 leads into GoHighLevel. Cleaned duplicates, tagged by status, built pipeline stages.</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div>
+                <div class="timeline-day">Day 2–3</div>
+                <div class="timeline-text">Automated SMS + email drip sequences went live. Re-engagement messages hit inboxes within hours.</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div>
+                <div class="timeline-day">Week 1</div>
+                <div class="timeline-text">Old leads started responding — some within minutes. Speed-to-lead system connected Heather instantly.</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div>
+                <div class="timeline-day">Week 2</div>
+                <div class="timeline-text">Pipeline filled with warm prospects. 12 booked appointments from leads that had been sitting dormant.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE DEMOS -->
+  <section class="section demos-section" id="demos">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-label">See It In Action</div>
+        <div class="section-title">Live <span class="highlight">System Demos</span></div>
+        <div class="section-subtitle mx-auto">Watch exactly how each phase works — from lead reactivation to automated referrals. Click any demo to see the full automation flow.</div>
+      </div>
+      <div class="demos-grid">
+        <div class="demo-card" data-demo="reactivation">
+          <div class="demo-card-visual">
+            <div class="demo-play-icon">&#9654;</div>
+          </div>
+          <div class="demo-card-body">
+            <div class="demo-card-label">Phase 1 Demo</div>
+            <h3>Lead Reactivation</h3>
+            <p>See how 2,500 old leads get imported, cleaned, and reactivated with automated SMS + email drips.</p>
+            <div class="demo-flow">Import &rarr; Tag &rarr; Drip &rarr; Reply &rarr; Book</div>
+          </div>
+        </div>
+        <div class="demo-card" data-demo="metaads">
+          <div class="demo-card-visual">
+            <div class="demo-play-icon">&#9654;</div>
+          </div>
+          <div class="demo-card-body">
+            <div class="demo-card-label">Phase 2 Demo</div>
+            <h3>Meta Ads Autopilot</h3>
+            <p>Watch a lead click an ad and get an SMS within 2 seconds, then automatically booked into your calendar.</p>
+            <div class="demo-flow">Ad Click &rarr; SMS (2s) &rarr; Book &rarr; Remind &rarr; Close</div>
+          </div>
+        </div>
+        <div class="demo-card" data-demo="aiemail">
+          <div class="demo-card-visual">
+            <div class="demo-play-icon">&#9654;</div>
+          </div>
+          <div class="demo-card-body">
+            <div class="demo-card-label">Phase 3 Demo</div>
+            <h3>AI Email Outreach</h3>
+            <p>See how AI researches each prospect and writes a truly personal email — not a template — that gets replies.</p>
+            <div class="demo-flow">Research &rarr; Detect Event &rarr; Write &rarr; Send &rarr; Reply</div>
+          </div>
+        </div>
+        <div class="demo-card" data-demo="referral">
+          <div class="demo-card-visual">
+            <div class="demo-play-icon">&#9654;</div>
+          </div>
+          <div class="demo-card-body">
+            <div class="demo-card-label">Phase 4 Demo</div>
+            <h3>Automated Referrals</h3>
+            <p>After a policy closes, see the automatic referral ask and how new referrals get booked instantly.</p>
+            <div class="demo-flow">Close &rarr; Day 3 Ask &rarr; Referral &rarr; Book (48hr)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON / ROI -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-label">The Transformation</div>
+        <div class="section-title">Your Business <span class="highlight">With BKflow</span></div>
+        <div class="section-subtitle mx-auto">A conservative comparison based on real client results.</div>
+      </div>
+      <div class="comparison-grid">
+        <div class="comparison-card before">
+          <div class="comparison-card-label">Right Now</div>
+          <div class="comparison-row">
+            <span class="comparison-row-label">Leads / Month</span>
+            <span class="comparison-row-value">10</span>
+          </div>
+          <div class="comparison-row">
+            <span class="comparison-row-label">Appointments</span>
+            <span class="comparison-row-value">4</span>
+          </div>
+          <div class="comparison-row">
+            <span class="comparison-row-label">Policies Closed</span>
+            <span class="comparison-row-value">2</span>
+          </div>
+          <div class="comparison-row">
+            <span class="comparison-row-label">Monthly Revenue</span>
+            <span class="comparison-row-value">$4,000</span>
+          </div>
+        </div>
+        <div class="comparison-card after">
+          <div class="comparison-card-label">With BKflow</div>
+          <div class="comparison-row">
+            <span class="comparison-row-label">Leads / Month</span>
+            <span class="comparison-row-value">30+</span>
+          </div>
+          <div class="comparison-row">
+            <span class="comparison-row-label">Appointments</span>
+            <span class="comparison-row-value">14</span>
+          </div>
+          <div class="comparison-row">
+            <span class="comparison-row-label">Policies Closed</span>
+            <span class="comparison-row-value">5</span>
+          </div>
+          <div class="comparison-row">
+            <span class="comparison-row-label">Monthly Revenue</span>
+            <span class="comparison-row-value">$10,000</span>
+          </div>
+        </div>
+      </div>
+      <!-- GUARANTEE -->
+      <div class="guarantee-card">
+        <div class="guarantee-icon">&#128737;</div>
+        <h3>The BKflow <span class="highlight-green">Guarantee</span></h3>
+        <p>If you don't generate a positive ROI within 30 days, we'll refund every penny. No questions asked. One closed policy covers your entire investment — we're that confident in what we build.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="section" style="padding-top: 40px;" id="pricing">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-label">Simple Pricing</div>
+        <div class="section-title">We Win When You <span class="highlight-green">Close More Policies</span></div>
+        <div class="section-subtitle mx-auto">Our incentives are 100% aligned with yours. No hidden fees, no long-term contracts.</div>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-card-header">
+          <div class="pricing-badge">Full Service Package</div>
+          <h3>BKflow Insurance Growth System</h3>
+          <div class="pricing-amounts">
+            <div class="pricing-amount-box">
+              <div class="pricing-amount-value">$997</div>
+              <div class="pricing-amount-label">One-Time Buildout</div>
+            </div>
+            <div class="pricing-amount-box">
+              <div class="pricing-amount-value">$1,500</div>
+              <div class="pricing-amount-label">Monthly Retainer</div>
+            </div>
+            <div class="pricing-amount-box">
+              <div class="pricing-amount-value">5%</div>
+              <div class="pricing-amount-label">Rev Share / Policy</div>
+            </div>
+          </div>
+        </div>
+        <div class="pricing-card-body">
+          <div class="pricing-features-grid">
+            <div class="pricing-feature"><span class="check">&#10003;</span> Full GoHighLevel CRM buildout + automations</div>
+            <div class="pricing-feature"><span class="check">&#10003;</span> Appointment booking + no-show recovery</div>
+            <div class="pricing-feature"><span class="check">&#10003;</span> Lead reactivation on your existing list</div>
+            <div class="pricing-feature"><span class="check">&#10003;</span> Cross-sell + renewal reminder sequences</div>
+            <div class="pricing-feature"><span class="check">&#10003;</span> Meta ad management — FB & IG</div>
+            <div class="pricing-feature"><span class="check">&#10003;</span> Automated referral system</div>
+            <div class="pricing-feature"><span class="check">&#10003;</span> AI personalized email campaigns</div>
+            <div class="pricing-feature"><span class="check">&#10003;</span> Monthly reporting + strategy calls</div>
+            <div class="pricing-feature"><span class="check">&#10003;</span> Instant SMS + email follow-up</div>
+            <div class="pricing-feature"><span class="check">&#10003;</span> Dedicated account manager</div>
+          </div>
+        </div>
+        <div class="pricing-card-footer">
+          <span class="btn-primary btn-green" data-nav="contact" style="width: 100%; justify-content: center;">Book Your Strategy Call &rarr;</span>
+          <div class="pricing-note">One closed policy ($2K) covers your entire monthly retainer</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="container text-center">
+      <div class="section-label">Ready?</div>
+      <div class="section-title">Ready to Build Your <span class="highlight">Growth System?</span></div>
+      <div class="section-subtitle mx-auto">Stop leaving money on the table. Let's build a system that books appointments, closes policies, and grows your book — on autopilot.</div>
+      <div class="cta-buttons">
+        <span class="btn-primary" data-nav="contact">Book a Strategy Call &rarr;</span>
+        <span class="btn-secondary" data-demo="reactivation">Watch a Demo &#9654;</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============================== -->
+<!--  SERVICES PAGE                 -->
+<!-- ============================== -->
+<div class="page" id="page-services">
+
+  <section class="about-hero">
+    <div class="container" style="position: relative; z-index: 2;">
+      <div class="section-label">Our Services</div>
+      <div class="section-title">A Complete <span class="highlight">Growth System</span> for Insurance</div>
+      <div class="section-subtitle mx-auto">Meta Ads + AI personalized email + full automation — running on autopilot. Each phase builds on the last.</div>
+    </div>
+  </section>
+
+  <section class="section phases-section">
+    <div class="container">
+
+      <!-- PHASE 1 -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <div class="phase-number">Phase 1</div>
+          <h2>Lead <span class="highlight">Reactivation</span></h2>
+          <p>We activate the leads you already own — old spreadsheets, dead CRM contacts, past inquiries. Booked appointments in the first 2 weeks with $0 ad spend.</p>
+          <div class="demo-banner">
+            <p>&#9654; See this phase in action</p>
+            <span class="btn-primary btn-green" data-demo="reactivation">Watch Demo</span>
+          </div>
+        </div>
+        <div class="phase-features">
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128260;</div>
+            <h4>Import & Clean</h4>
+            <p>Pull your entire lead list into GoHighLevel — spreadsheets, old CRMs, everything organized.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#127919;</div>
+            <h4>Smart Segmentation</h4>
+            <p>Every contact tagged by status, recency, and interest level to target the right people first.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128232;</div>
+            <h4>Automated Drip Campaigns</h4>
+            <p>14–21 day SMS + email sequences that re-engage cold leads with proven messaging.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#9889;</div>
+            <h4>Speed-to-Lead</h4>
+            <p>When a lead responds, you're connected in under 60 seconds — before they lose interest.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128200;</div>
+            <h4>Full Pipeline Tracking</h4>
+            <p>New → Contacted → Booked → Quoted → Closed. See exactly where every lead stands.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128276;</div>
+            <h4>Real-Time Notifications</h4>
+            <p>Instant alerts when leads open emails, click links, or reply — never miss a hot prospect.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128197;</div>
+            <h4>No-Show Recovery</h4>
+            <p>Missed appointments get automatic follow-up and rescheduling — no leads fall through.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#127942;</div>
+            <h4>Results in 2 Weeks</h4>
+            <p>Heather booked 12 appointments from leads already in a spreadsheet. $0 ad spend.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 2 -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <div class="phase-number">Phase 2</div>
+          <h2>Meta Ads — <span class="highlight">Leads on Autopilot</span></h2>
+          <p>Facebook & Instagram ads that bring in fresh qualified prospects every single day. Instant automated follow-up the second they submit.</p>
+          <div class="demo-banner">
+            <p>&#9654; See this phase in action</p>
+            <span class="btn-primary btn-green" data-demo="metaads">Watch Demo</span>
+          </div>
+        </div>
+        <div class="phase-features">
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128272;</div>
+            <h4>Compliant Lead Gen Ads</h4>
+            <p>100% compliant with Meta's Special Ads Category — no risk of account bans or policy violations.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128203;</div>
+            <h4>Qualifying Lead Forms</h4>
+            <p>Built-in questions filter out tire-kickers before they hit your pipeline — only serious prospects.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128101;</div>
+            <h4>Lookalike Audiences</h4>
+            <p>Custom audiences modeled on your best clients — ads reach people most likely to buy.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#127909;</div>
+            <h4>Video-First Creative</h4>
+            <p>Ads featuring you on camera build instant trust and outperform generic stock image ads by 3x.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#9889;</div>
+            <h4>Instant Automated Follow-Up</h4>
+            <p>Every lead auto-syncs to GHL and gets an SMS + email within seconds of submitting.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128337;</div>
+            <h4>14-Day Nurture Drip</h4>
+            <p>If they don't book in 24 hours, a proven nurture sequence keeps working to convert them.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128197;</div>
+            <h4>No-Show Recovery</h4>
+            <p>The system follows up and reschedules automatically — nothing falls through the cracks.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128202;</div>
+            <h4>Full Attribution</h4>
+            <p>See exactly which ads, audiences, and creatives are closing policies — double down on winners.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 3 -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <div class="phase-number">Phase 3</div>
+          <h2>AI Email — <span class="highlight">Outreach That Converts</span></h2>
+          <p>AI researches each prospect first, then writes a completely custom email that feels personal — because it is. Not templates. Truly custom outreach at scale.</p>
+          <div class="demo-banner">
+            <p>&#9654; See this phase in action</p>
+            <span class="btn-primary btn-green" data-demo="aiemail">Watch Demo</span>
+          </div>
+        </div>
+        <div class="phase-features">
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128269;</div>
+            <h4>Deep Prospect Research</h4>
+            <p>AI scans LinkedIn, Facebook, company pages, and news — builds a complete profile before writing.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#127881;</div>
+            <h4>Life Event Detection</h4>
+            <p>Picks up on job changes, promotions, new businesses, family milestones — perfect conversation starters.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#9997;</div>
+            <h4>Fully Custom Emails</h4>
+            <p>Every subject line and email body is unique per person — not mail merge, not templates.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128142;</div>
+            <h4>High-Value Targeting</h4>
+            <p>Perfect for reaching decision-makers, business owners, and high-net-worth prospects at scale.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128065;</div>
+            <h4>Competitor Intelligence</h4>
+            <p>Get alerts when a competing agent enters a prospect's zip code — reach out first.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128204;</div>
+            <h4>Auto-Pipeline Integration</h4>
+            <p>Every response, open, and click is tracked and fed directly into your GHL pipeline.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#129309;</div>
+            <h4>Partnership Building</h4>
+            <p>Reach out to realtors, mortgage brokers, and other complementary businesses for referral partnerships.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128640;</div>
+            <h4>Scalable & Personal</h4>
+            <p>Send hundreds of truly personal emails per week — something impossible to do manually.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 4 -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <div class="phase-number">Phase 4</div>
+          <h2>Cross-Sells & <span class="highlight-green">Automated Referrals</span></h2>
+          <p>Every closed deal keeps working — selling more products and generating warm referrals automatically. Your book grows on autopilot after every close.</p>
+          <div class="demo-banner">
+            <p>&#9654; See this phase in action</p>
+            <span class="btn-primary btn-green" data-demo="referral">Watch Demo</span>
+          </div>
+        </div>
+        <div class="phase-features">
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128260;</div>
+            <h4>Automatic Cross-Sell</h4>
+            <p>After every close, sequences promote additional products (life, auto, home) — timed perfectly.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128276;</div>
+            <h4>Renewal Reminders</h4>
+            <p>Automated reminders go out before policy expiration — protects your book and prevents churn.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128172;</div>
+            <h4>Referral Ask Sequence</h4>
+            <p>A friendly SMS goes out days after close asking for warm referrals — when satisfaction is highest.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#9889;</div>
+            <h4>Instant Referral Follow-Up</h4>
+            <p>New referrals are automatically added to your pipeline and contacted within seconds.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#129309;</div>
+            <h4>Warm Introduction Flow</h4>
+            <p>The referring client gets a message to introduce you — making first contact warm, not cold.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128202;</div>
+            <h4>Full Attribution Tracking</h4>
+            <p>Every referral is tagged back to the original client — see where your best leads come from.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128197;</div>
+            <h4>Day 7 Follow-Up</h4>
+            <p>If the client hasn't responded to the referral ask, a gentle nudge goes out automatically.</p>
+          </div>
+          <div class="phase-feature">
+            <div class="phase-feature-icon">&#128200;</div>
+            <h4>Compounding Growth</h4>
+            <p>Each closed policy becomes a new lead source — your business grows exponentially over time.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="container text-center">
+      <div class="section-label">Get Started</div>
+      <div class="section-title">Ready to Scale Your <span class="highlight-green">Insurance Business?</span></div>
+      <div class="section-subtitle mx-auto">Every phase runs on autopilot once it's live. Let's build your growth engine.</div>
+      <div class="cta-buttons">
+        <span class="btn-primary btn-green" data-nav="contact">Book Your Strategy Call &rarr;</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============================== -->
+<!--  TESTIMONIALS PAGE             -->
+<!-- ============================== -->
+<div class="page" id="page-testimonials">
+
+  <section class="testimonials-hero">
+    <div class="container" style="position: relative; z-index: 2;">
+      <div class="section-label">Client Results</div>
+      <div class="section-title">Real Agents. Real <span class="highlight-green">Results.</span></div>
+      <div class="section-subtitle mx-auto">Don't just take our word for it — see what our clients have to say about the BKflow Insurance Growth System.</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      
+      <!-- Heather Testimonial - Featured -->
+      <div class="testimonial-featured">
+        <div class="testimonial-featured-inner">
+          <div class="testimonial-featured-content">
+            <div class="testimonial-badge">&#127942; Featured Success Story</div>
+            <div class="testimonial-quote-mark">&ldquo;</div>
+            <div class="testimonial-featured-text">I had about 2,500 old leads just sitting in a spreadsheet collecting dust. BKflow imported them, cleaned everything up, and launched automated follow-up sequences. Within 2 weeks I had 12 booked appointments — and I didn't spend a single dollar on ads. I closed 5 policies and made over $12K in profit. One reactivation campaign paid for the entire system. I wish I had done this a year ago.</div>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">H</div>
+              <div>
+                <div class="testimonial-author-name">Heather</div>
+                <div class="testimonial-author-role">Life Insurance Agent</div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-featured-metrics">
+            <div style="text-align: center; margin-bottom: 8px;">
+              <div class="section-label" style="margin-bottom: 8px;">Heather's Results</div>
+            </div>
+            <div class="testimonial-metric-row">
+              <span class="testimonial-metric-label">Appointments Booked</span>
+              <span class="testimonial-metric-value">12+</span>
+            </div>
+            <div class="testimonial-metric-row">
+              <span class="testimonial-metric-label">Policies Closed</span>
+              <span class="testimonial-metric-value green">5+</span>
+            </div>
+            <div class="testimonial-metric-row">
+              <span class="testimonial-metric-label">Total Profit</span>
+              <span class="testimonial-metric-value">$12K+</span>
+            </div>
+            <div class="testimonial-metric-row">
+              <span class="testimonial-metric-label">ROI</span>
+              <span class="testimonial-metric-value green">6X</span>
+            </div>
+            <div class="testimonial-metric-row">
+              <span class="testimonial-metric-label">Ad Spend</span>
+              <span class="testimonial-metric-value green">$0</span>
+            </div>
+            <div class="testimonial-metric-row">
+              <span class="testimonial-metric-label">Time to Results</span>
+              <span class="testimonial-metric-value">2 Weeks</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- More testimonials placeholder -->
+      <div style="margin-top: 80px; text-align: center;">
+        <div class="guarantee-card" style="border-color: rgba(0,212,255,0.3);">
+          <div class="guarantee-icon" style="font-size: 1.5rem;">&#128640;</div>
+          <h3>Want to Be Our Next <span class="highlight">Success Story?</span></h3>
+          <p style="margin-bottom: 24px;">We're building case studies with every new client we onboard. Book a strategy call to see how the BKflow system can work for your insurance business.</p>
+          <span class="btn-primary" data-nav="contact">Book Your Strategy Call &rarr;</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<!-- ============================== -->
+<!--  ABOUT PAGE                    -->
+<!-- ============================== -->
+<div class="page" id="page-about">
+
+  <section class="about-hero">
+    <div class="container" style="position: relative; z-index: 2;">
+      <div class="section-label">About BKflow</div>
+      <div class="section-title">We Build <span class="highlight">Growth Machines</span> for Insurance</div>
+      <div class="section-subtitle mx-auto">We're not a generic marketing agency. We specialize exclusively in helping insurance agents and brokers generate more leads, book more appointments, and close more policies.</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="about-story">
+        <div class="about-story-text">
+          <div class="section-label">Our Story</div>
+          <h3>Built by Operators, Not Just Marketers</h3>
+          <p>BKflow was built out of frustration with the broken lead generation model in insurance. We saw agents spending thousands on shared leads, buying lists from vendors who sold the same contact to five other agents, and watching warm prospects go cold because there was no system to follow up fast enough.</p>
+          <p>So we built one. We combined Meta ad expertise, AI-powered personalization, and full CRM automation on GoHighLevel to create a system that doesn't just generate leads — it nurtures, books, and converts them on autopilot.</p>
+          <p>Today, we work exclusively with insurance agents and brokers who are serious about scaling. Every tool, workflow, and sequence we build is designed specifically for the insurance industry.</p>
+        </div>
+        <div class="about-stats">
+          <div class="about-stat">
+            <div class="about-stat-value">50+</div>
+            <div class="about-stat-label">Insurance Agents Served</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat-value" style="color: var(--green);">6X</div>
+            <div class="about-stat-label">Average Client ROI</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat-value">2,500+</div>
+            <div class="about-stat-label">Leads Reactivated</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat-value" style="color: var(--green);">24/7</div>
+            <div class="about-stat-label">Automation Running</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 0;">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-label">Why BKflow</div>
+        <div class="section-title">What Makes Us <span class="highlight">Different</span></div>
+      </div>
+      <div class="about-values">
+        <div class="value-card">
+          <div class="value-icon">&#127919;</div>
+          <h3>Insurance-Only Focus</h3>
+          <p>We don't work with restaurants, gyms, or dentists. Every system, template, and workflow is built specifically for insurance agents and brokers.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">&#128260;</div>
+          <h3>Reactivation First</h3>
+          <p>Before you spend a dollar on ads, we monetize the leads you already have. Most agents are sitting on thousands in untapped revenue.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">&#9889;</div>
+          <h3>Speed-to-Lead</h3>
+          <p>When a prospect raises their hand, they hear from you in under 60 seconds — not hours. That speed alone closes more deals.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">&#129302;</div>
+          <h3>AI-Powered Outreach</h3>
+          <p>Our AI doesn't send templates. It researches each prospect and writes truly personalized emails that get replies.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">&#128200;</div>
+          <h3>Full Funnel Automation</h3>
+          <p>From first touch to cross-sell to referral — every step is automated. Your book of business grows while you sleep.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">&#128737;</div>
+          <h3>30-Day ROI Guarantee</h3>
+          <p>If you don't see a positive return in 30 days, we refund everything. One closed policy covers your entire investment.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section cta-section">
+    <div class="container text-center">
+      <div class="section-label">Join Us</div>
+      <div class="section-title">Ready to Grow Your <span class="highlight-green">Book of Business?</span></div>
+      <div class="section-subtitle mx-auto">Let's talk about how BKflow can help you close more policies and build a thriving practice.</div>
+      <div class="cta-buttons">
+        <span class="btn-primary" data-nav="contact">Book a Strategy Call &rarr;</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============================== -->
+<!--  CONTACT PAGE                  -->
+<!-- ============================== -->
+<div class="page" id="page-contact">
+
+  <section class="contact-hero">
+    <div class="container">
+      <div class="section-label">Get In Touch</div>
+      <div class="section-title">Let's Build Your <span class="highlight">Growth System</span></div>
+      <div class="section-subtitle mx-auto">Fill out the form below and we'll reach out within 24 hours to schedule your free strategy call.</div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 0;">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-form-wrapper">
+          <h3 style="font-size: 1.2rem; margin-bottom: 24px;">Book Your Free Strategy Call</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name *</label>
+              <input type="text" placeholder="John" id="firstName">
+            </div>
+            <div class="form-group">
+              <label>Last Name *</label>
+              <input type="text" placeholder="Smith" id="lastName">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" placeholder="john@example.com" id="email">
+          </div>
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="tel" placeholder="(555) 123-4567" id="phone">
+          </div>
+          <div class="form-group">
+            <label>What type of insurance do you sell?</label>
+            <select id="insuranceType">
+              <option value="">Select one...</option>
+              <option value="life">Life Insurance</option>
+              <option value="health">Health Insurance</option>
+              <option value="auto">Auto Insurance</option>
+              <option value="home">Home Insurance</option>
+              <option value="commercial">Commercial Insurance</option>
+              <option value="multi">Multiple Lines</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>How many leads are in your current database?</label>
+            <select id="leadCount">
+              <option value="">Select one...</option>
+              <option value="0-500">0 – 500</option>
+              <option value="500-1000">500 – 1,000</option>
+              <option value="1000-5000">1,000 – 5,000</option>
+              <option value="5000+">5,000+</option>
+              <option value="unsure">Not sure</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>What's your biggest challenge right now?</label>
+            <textarea placeholder="Tell us what's holding you back — not enough leads, poor follow-up, low close rate, etc." id="challenge"></textarea>
+          </div>
+          <span class="btn-primary btn-green" style="width: 100%; justify-content: center;" data-submit-form>Submit &amp; Book My Call &rarr;</span>
+          <div id="formMessage" style="margin-top: 16px; display: none; padding: 14px; border-radius: 8px; font-size: 0.9rem; text-align: center;"></div>
+        </div>
+        <div class="contact-info-side">
+          <div class="contact-info-card">
+            <div class="contact-info-icon">&#128222;</div>
+            <h4>Call Us</h4>
+            <p>(347) 476-6555</p>
+          </div>
+          <div class="contact-info-card">
+            <div class="contact-info-icon">&#128231;</div>
+            <h4>Email</h4>
+            <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="47050c212b283024282934322b332e292007202a262e2b6924282a">[email&#160;protected]</a></p>
+          </div>
+          <div class="contact-info-card">
+            <div class="contact-info-icon">&#9201;</div>
+            <h4>Response Time</h4>
+            <p>We respond within 24 hours — usually much faster.</p>
+          </div>
+          <div class="contact-faq">
+            <h4>Frequently Asked Questions</h4>
+            <div class="faq-item" data-faq-toggle>
+              <div class="faq-question">How quickly can I expect results? <span class="arrow">&#9660;</span></div>
+              <div class="faq-answer"><p>Most clients see their first booked appointments within 2 weeks from lead reactivation alone — before any ad spend.</p></div>
+            </div>
+            <div class="faq-item" data-faq-toggle>
+              <div class="faq-question">Do I need to have existing leads? <span class="arrow">&#9660;</span></div>
+              <div class="faq-answer"><p>It helps, but it's not required. If you have old leads we'll reactivate them first. Either way, Phase 2 Meta Ads generates fresh leads daily.</p></div>
+            </div>
+            <div class="faq-item" data-faq-toggle>
+              <div class="faq-question">What if I'm not tech savvy? <span class="arrow">&#9660;</span></div>
+              <div class="faq-answer"><p>We handle everything — the CRM buildout, automations, ad management, and email campaigns. You just focus on closing policies.</p></div>
+            </div>
+            <div class="faq-item" data-faq-toggle>
+              <div class="faq-question">Is there a long-term contract? <span class="arrow">&#9660;</span></div>
+              <div class="faq-answer"><p>No long-term contracts. We offer a 30-day ROI guarantee — if you don't see positive returns, we refund every penny.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============================== -->
+<!--  FOOTER (all pages)            -->
+<!-- ============================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo" data-nav="home" style="cursor:pointer;">
+          <div class="logo-icon">BK</div>
+          BKflow
+        </div>
+        <p>The all-in-one lead generation and automation system built exclusively for insurance agents and brokers.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Pages</h4>
+        <a data-nav="home">Home</a>
+        <a data-nav="services">Services</a>
+        <a data-nav="testimonials">Testimonials</a>
+        <a data-nav="about">About</a>
+        <a data-nav="contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a data-nav="services">Lead Reactivation</a>
+        <a data-nav="services">Meta Ads</a>
+        <a data-nav="services">AI Email Outreach</a>
+        <a data-nav="services">Cross-Sell & Referrals</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="/cdn-cgi/l/email-protection#56141d303a392135393825233a223f383116313b373f3a7835393b"><span class="__cf_email__" data-cfemail="0d4f466b61627a6e62637e78617964636a4d6a606c6461236e6260">[email&#160;protected]</span></a>
+        <a href="tel:3474766555">(347) 476-6555</a>
+        <a data-nav="contact">Book a Call</a>
+        <a>Long Island, NY</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 BKflow. All rights reserved.</span>
+      <span>Built for Insurance Agents & Brokers</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================== -->
+<!--  DEMO MODALS — IMMERSIVE       -->
+<!-- ============================== -->
+
+<!-- DEMO 1: Lead Reactivation -->
+<div class="modal-overlay" id="modal-reactivation">
+  <div class="modal-content dw">
+    <div class="modal-close" data-close-demo="reactivation">&times;</div>
+    <div class="section-label">Phase 1 — Live Demo</div>
+    <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:4px;">Lead Reactivation Flow</h2>
+    <p style="font-size:0.85rem;color:var(--text-secondary);">Watch 2,500 dormant leads turn into booked appointments — $0 ad spend.</p>
+    <div class="demo-layout">
+      <!-- PHONE -->
+      <div class="demo-phone">
+        <div class="demo-phone-notch"></div>
+        <div class="demo-phone-header">
+          <div class="demo-phone-avatar">S</div>
+          <div>
+            <div class="demo-phone-name">Sarah Thompson</div>
+            <div class="demo-phone-status">Lead — Life Insurance</div>
+          </div>
+        </div>
+        <div class="demo-phone-body">
+          <div class="demo-b sys d1">&#128196; 2,500 leads imported into GoHighLevel</div>
+          <div class="demo-b sys d2">&#127919; Sarah tagged: Warm — opened 2 emails previously</div>
+          <div class="demo-b out d3">Hey Sarah! I noticed we chatted a few months ago about your coverage options. Are you still looking for a better rate?<div class="btime">10:02 AM</div></div>
+          <div class="demo-typing d4"><span></span><span></span><span></span></div>
+          <div class="demo-b inc d5">Yes actually! I've been meaning to follow up on that. What do you have?<div class="btime">10:03 AM</div></div>
+          <div class="demo-b out d6">Great timing! I have a few options that could save you quite a bit. Want to hop on a quick 15-min call this week? Here's my calendar:<div class="btime">10:03 AM</div></div>
+          <div class="demo-b ok d7">&#128197; Appointment Booked — Thu 2:00 PM</div>
+          <div class="demo-b out d8">You're all set for Thursday at 2! You'll get a reminder the day before. Looking forward to it!<div class="btime">10:04 AM</div></div>
+        </div>
+        <div class="demo-result d9">&#10003; Policy Closed — $2,400 Life Policy &bull; $0 Ad Spend</div>
+      </div>
+      <!-- SYSTEM LOG -->
+      <div class="demo-log">
+        <div class="demo-log-title">System Activity Log</div>
+        <div class="demo-le d1"><div class="ld"></div><div><strong>Import Complete</strong><br>2,500 contacts cleaned. 347 duplicates removed. Tagged by status & recency.<div class="lt">10:00 AM</div></div></div>
+        <div class="demo-le d2"><div class="ld"></div><div><strong>Segmentation</strong><br>Sarah sorted into "Warm" bucket — opened 2 previous emails, never replied.<div class="lt">10:01 AM</div></div></div>
+        <div class="demo-le d3"><div class="ld"></div><div><strong>SMS Drip Triggered</strong><br>Reactivation Sequence #1 sent to 842 warm contacts including Sarah.<div class="lt">10:02 AM</div></div></div>
+        <div class="demo-le gl d5"><div class="ld"></div><div><strong>&#9889; Reply Detected — 47 seconds</strong><br>Speed-to-lead triggered. Agent notified instantly via push notification.<div class="lt">10:03 AM</div></div></div>
+        <div class="demo-le gl d7"><div class="ld"></div><div><strong>&#128197; Calendar Booked</strong><br>Thu 2:00 PM confirmed. 24hr + 1hr reminders activated. No-show recovery armed.<div class="lt">10:04 AM</div></div></div>
+        <div class="demo-le gl d8"><div class="ld"></div><div><strong>Pipeline Updated</strong><br>Sarah moved: New &rarr; Contacted &rarr; Booked. Auto-tagged: Reactivation Win.<div class="lt">10:04 AM</div></div></div>
+        <div class="demo-le gl d9"><div class="ld"></div><div><strong>&#127881; Policy Closed</strong><br>$2,400 life policy signed. Cross-sell sequence triggered for Day 7. Referral ask queued for Day 3.<div class="lt">Thu 2:45 PM</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO 2: Meta Ads -->
+<div class="modal-overlay" id="modal-metaads">
+  <div class="modal-content dw">
+    <div class="modal-close" data-close-demo="metaads">&times;</div>
+    <div class="section-label">Phase 2 — Live Demo</div>
+    <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:4px;">Meta Ads Autopilot</h2>
+    <p style="font-size:0.85rem;color:var(--text-secondary);">From ad click to booked appointment in under 2 minutes — fully automated.</p>
+    <div class="demo-layout">
+      <div class="demo-phone">
+        <div class="demo-phone-notch"></div>
+        <div class="demo-phone-header">
+          <div class="demo-phone-avatar">M</div>
+          <div>
+            <div class="demo-phone-name">Mike Reynolds</div>
+            <div class="demo-phone-status">New Lead — Facebook Ad</div>
+          </div>
+        </div>
+        <div class="demo-phone-body">
+          <div class="demo-b sys d1">&#128241; Mike tapped "Get My Free Quote" on your Facebook ad</div>
+          <div class="demo-b sys d2">&#128203; Lead form completed — Age: 34, Coverage: Term Life, Budget: $100-200/mo</div>
+          <div class="demo-b out d3">Hey Mike! Thanks for requesting a quote. I'm putting together some options for you right now. Want to hop on a quick call this week so I can walk you through them?<div class="btime">Sent — 2 seconds after submit</div></div>
+          <div class="demo-typing d4"><span></span><span></span><span></span></div>
+          <div class="demo-b inc d5">Yeah that'd be great. What times work?<div class="btime">3:42 PM</div></div>
+          <div class="demo-b out d6">Here's my calendar — just grab any slot that works for you: [Booking Link]<div class="btime">3:42 PM</div></div>
+          <div class="demo-b ok d7">&#128197; Appointment Booked — Wed 11:00 AM</div>
+          <div class="demo-b out d8">Locked in for Wednesday at 11! I'll send you a reminder beforehand. Talk soon, Mike!<div class="btime">3:43 PM</div></div>
+        </div>
+        <div class="demo-result d9">&#10003; Showed Up &bull; Quoted &bull; Pipeline: Closing Stage</div>
+      </div>
+      <div class="demo-log">
+        <div class="demo-log-title">System Activity Log</div>
+        <div class="demo-le d1"><div class="ld"></div><div><strong>Ad Interaction</strong><br>Facebook Video Ad #3 — Lookalike Audience (modeled on best clients). Mike watched 75% of video.<div class="lt">3:40 PM</div></div></div>
+        <div class="demo-le d2"><div class="ld"></div><div><strong>Lead Form Qualified</strong><br>3 screening questions passed. Budget: $100-200/mo. Tire-kicker filter: PASSED.<div class="lt">3:40 PM</div></div></div>
+        <div class="demo-le gl d3"><div class="ld"></div><div><strong>&#9889; Instant Follow-Up</strong><br>SMS sent 2 seconds after submit. Email with agent photo + calendar link sent at 30 seconds.<div class="lt">3:40 PM</div></div></div>
+        <div class="demo-le d5"><div class="ld"></div><div><strong>Reply Detected</strong><br>Mike replied within 2 minutes. Lead score upgraded from "New" to "Hot."<div class="lt">3:42 PM</div></div></div>
+        <div class="demo-le gl d7"><div class="ld"></div><div><strong>&#128197; Appointment Set</strong><br>Wed 11:00 AM. Reminders: 24hr, 1hr, 15min. No-show recovery sequence armed.<div class="lt">3:43 PM</div></div></div>
+        <div class="demo-le gl d8"><div class="ld"></div><div><strong>Attribution Logged</strong><br>Source: Facebook &rarr; Video Ad #3 &rarr; Lookalike Audience &rarr; Booked. Cost per lead tracked.<div class="lt">3:43 PM</div></div></div>
+        <div class="demo-le gl d9"><div class="ld"></div><div><strong>14-Day Drip Armed</strong><br>If Mike hadn't replied, nurture sequence would activate at 24hr mark automatically.<div class="lt">3:43 PM</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO 3: AI Email -->
+<div class="modal-overlay" id="modal-aiemail">
+  <div class="modal-content dw">
+    <div class="modal-close" data-close-demo="aiemail">&times;</div>
+    <div class="section-label">Phase 3 — Live Demo</div>
+    <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:4px;">AI Email Outreach</h2>
+    <p style="font-size:0.85rem;color:var(--text-secondary);">AI researches each prospect, then writes a truly personal email — not a template.</p>
+    <div class="demo-layout">
+      <div class="demo-phone" style="border-color: rgba(0,212,255,0.15);">
+        <div class="demo-phone-notch"></div>
+        <div class="demo-phone-header" style="background: rgba(0,212,255,0.03);">
+          <div class="demo-phone-avatar">&#9993;</div>
+          <div>
+            <div class="demo-phone-name">AI Email Preview</div>
+            <div class="demo-phone-status">Outbound to Mike Johnson</div>
+          </div>
+        </div>
+        <div class="demo-phone-body" style="gap: 6px;">
+          <div class="demo-b sys d1">&#128269; AI scanning LinkedIn, Facebook, news for Mike Johnson...</div>
+          <div class="demo-b sys d2">&#127881; Life event found: "Agent of the Quarter" award from brokerage</div>
+          <div class="demo-b sys d3">&#9997; Composing personalized email...</div>
+          <div class="demo-b out d4" style="border-radius:12px;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);color:var(--text-primary);font-size:0.76rem;max-width:95%;align-self:center;">
+            <div style="color:var(--cyan);font-weight:600;margin-bottom:6px;font-size:0.72rem;">Subject: Congrats on Agent of the Quarter, Mike!</div>
+            Hey Mike — saw you just earned Agent of the Quarter at Coastal Realty. Well deserved! Top producers like you often overlook their own coverage while taking care of clients. Would you be open to a quick 10-min review? I specialize in working with real estate professionals.
+            <div class="btime" style="color:var(--text-muted);">Sent 9:15 AM — Optimal send time</div>
+          </div>
+          <div class="demo-b sys d5">&#128172; Email opened at 9:47 AM</div>
+          <div class="demo-b sys d6">&#128172; Link clicked at 10:12 AM</div>
+          <div class="demo-b inc d7" style="max-width:95%;align-self:center;border-radius:12px;background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.12);">
+            <div style="color:var(--green);font-weight:600;margin-bottom:4px;font-size:0.7rem;">Reply from Mike Johnson</div>
+            Thanks! I've actually been meaning to review my coverage. Let's set something up — what does your availability look like this week?
+            <div class="btime">11:22 AM</div>
+          </div>
+          <div class="demo-b ok d8">&#128197; Booking link auto-sent &bull; Mike booked Friday 10 AM</div>
+        </div>
+        <div class="demo-result d9">&#10003; High-Value Prospect Added to Pipeline</div>
+      </div>
+      <div class="demo-log">
+        <div class="demo-log-title">AI Research Log</div>
+        <div class="demo-le d1"><div class="ld"></div><div><strong>Prospect Identified</strong><br>Mike Johnson — Real estate broker, Coastal Realty. LinkedIn: 500+ connections. Active on Facebook.<div class="lt">9:10 AM</div></div></div>
+        <div class="demo-le d2"><div class="ld"></div><div><strong>Life Event Detected</strong><br>Award: "Agent of the Quarter" — posted 3 days ago. High engagement (47 likes, 12 comments).<div class="lt">9:12 AM</div></div></div>
+        <div class="demo-le d3"><div class="ld"></div><div><strong>Email Composed</strong><br>Subject line personalized. Body references specific achievement. Offer: coverage review for top producers. No template used.<div class="lt">9:14 AM</div></div></div>
+        <div class="demo-le d4"><div class="ld"></div><div><strong>Email Delivered</strong><br>Sent at 9:15 AM (optimal for real estate professionals, Tue-Thu). Tracking pixel + click tracking active.<div class="lt">9:15 AM</div></div></div>
+        <div class="demo-le gl d5"><div class="ld"></div><div><strong>Email Opened</strong><br>First open at 9:47 AM. Opened again at 10:08 AM (re-read = high interest signal).<div class="lt">9:47 AM</div></div></div>
+        <div class="demo-le gl d7"><div class="ld"></div><div><strong>&#9889; Reply Received</strong><br>Positive reply detected. Auto-added to GHL pipeline as "Hot Lead." Booking link sent automatically.<div class="lt">11:22 AM</div></div></div>
+        <div class="demo-le gl d8"><div class="ld"></div><div><strong>&#128197; Appointment Booked</strong><br>Friday 10:00 AM. Tagged: AI-Email-Win, High-Net-Worth. Reminder sequence activated.<div class="lt">11:30 AM</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO 4: Referrals -->
+<div class="modal-overlay" id="modal-referral">
+  <div class="modal-content dw">
+    <div class="modal-close" data-close-demo="referral">&times;</div>
+    <div class="section-label">Phase 4 — Live Demo</div>
+    <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:4px;">Automated Referral System</h2>
+    <p style="font-size:0.85rem;color:var(--text-secondary);">Every closed policy triggers referral asks and cross-sells — automatically.</p>
+    <div class="demo-layout">
+      <div class="demo-phone">
+        <div class="demo-phone-notch"></div>
+        <div class="demo-phone-header">
+          <div class="demo-phone-avatar">S</div>
+          <div>
+            <div class="demo-phone-name">Sarah Mitchell</div>
+            <div class="demo-phone-status">Client — Policy Closed</div>
+          </div>
+        </div>
+        <div class="demo-phone-body">
+          <div class="demo-b ok d1">&#10003; Life insurance policy signed &bull; $2,400 annual</div>
+          <div class="demo-b sys d2">&#128337; Day 3 — Referral sequence triggered</div>
+          <div class="demo-b out d3">Hey Sarah! So glad we got your coverage locked in. &#128079; Quick question — do you know anyone else who might benefit from a quick policy review? A friend, family member, coworker?<div class="btime">Day 3 — 10:15 AM</div></div>
+          <div class="demo-typing d4"><span></span><span></span><span></span></div>
+          <div class="demo-b inc d5">Actually yes! My sister Maria has been looking into life insurance too. Her number is (555) 987-6543<div class="btime">10:22 AM</div></div>
+          <div class="demo-b out d6">Amazing, thank you Sarah! I'll reach out to Maria and take great care of her. I'm also sending you a quick intro message you can forward if you'd like. &#128522;<div class="btime">10:22 AM</div></div>
+          <div class="demo-b sys d7">&#128140; Warm intro message sent to Sarah for Maria</div>
+          <div class="demo-b ok d8">&#128197; Maria booked — Tue 3:00 PM (48 hours later)</div>
+          <div class="demo-b sys d9">&#128260; Day 7 — Cross-sell sequence: Auto + Home bundle info sent to Sarah</div>
+        </div>
+        <div class="demo-result d10">&#10003; Referral Closed &bull; Cross-Sell Active &bull; Compounding Growth</div>
+      </div>
+      <div class="demo-log">
+        <div class="demo-log-title">System Activity Log</div>
+        <div class="demo-le gl d1"><div class="ld"></div><div><strong>Policy Closed — Won</strong><br>Sarah Mitchell: $2,400/yr life policy. Pipeline stage: Closed-Won. Cross-sell timer started.<div class="lt">Monday 2:45 PM</div></div></div>
+        <div class="demo-le d2"><div class="ld"></div><div><strong>Referral Ask Triggered</strong><br>Day 3 automated SMS sent. Timing optimized for peak satisfaction window post-close.<div class="lt">Thursday 10:15 AM</div></div></div>
+        <div class="demo-le gl d5"><div class="ld"></div><div><strong>&#9889; Referral Received</strong><br>Maria (sister) — (555) 987-6543. Auto-created as new contact. Tagged: Referral, Source: Sarah Mitchell.<div class="lt">Thursday 10:22 AM</div></div></div>
+        <div class="demo-le d6"><div class="ld"></div><div><strong>Warm Intro Sent</strong><br>Sarah received a forwarding message for Maria. First contact will be warm, not cold.<div class="lt">Thursday 10:23 AM</div></div></div>
+        <div class="demo-le gl d7"><div class="ld"></div><div><strong>Maria — SMS Sequence Started</strong><br>Personalized outreach referencing Sarah. Booking link included. Follow-up at 24hr if no reply.<div class="lt">Thursday 10:23 AM</div></div></div>
+        <div class="demo-le gl d8"><div class="ld"></div><div><strong>&#128197; Maria Booked</strong><br>Tue 3:00 PM. She's already warm from Sarah's intro. High close probability.<div class="lt">Saturday 10:45 AM</div></div></div>
+        <div class="demo-le d9"><div class="ld"></div><div><strong>Cross-Sell Activated</strong><br>Day 7: Sarah auto-receives Auto + Home bundle info. Personalized based on her existing coverage.<div class="lt">Next Monday 9:00 AM</div></div></div>
+        <div class="demo-le gl d10"><div class="ld"></div><div><strong>&#127881; Growth Loop Active</strong><br>1 closed policy &rarr; 1 referral booked + cross-sell active. Each close feeds the next. Compounding.<div class="lt">Ongoing</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== -->
+<!--  JAVASCRIPT                    -->
+<!-- ============================== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  // ========== NAVIGATION ==========
+  function navigateTo(page) {
+    var target = document.getElementById('page-' + page);
+    if (!target) return;
+    var pages = document.querySelectorAll('.page');
+    for (var i = 0; i < pages.length; i++) { pages[i].classList.remove('active'); }
+    target.classList.add('active');
+    var links = document.querySelectorAll('.nav-link');
+    for (var i = 0; i < links.length; i++) { links[i].classList.remove('active'); }
+    var navLink = document.querySelector('.nav-link[data-page="' + page + '"]');
+    if (navLink) navLink.classList.add('active');
+    window.scrollTo(0, 0);
+    document.getElementById('navLinks').classList.remove('open');
+  }
+
+  // ========== DEMOS ==========
+  function openDemo(name) {
+    var modal = document.getElementById('modal-' + name);
+    if (!modal) return;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    var els = modal.querySelectorAll('.demo-b, .demo-le, .demo-typing, .demo-result');
+    for (var i = 0; i < els.length; i++) {
+      els[i].style.animation = 'none';
+      els[i].offsetHeight;
+      els[i].style.animation = '';
+    }
+  }
+
+  function closeDemo(name) {
+    var modal = document.getElementById('modal-' + name);
+    if (!modal) return;
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // ========== FORM ==========
+  function submitForm() {
+    var firstName = document.getElementById('firstName').value.trim();
+    var lastName = document.getElementById('lastName').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var phone = document.getElementById('phone').value.trim();
+    var msgEl = document.getElementById('formMessage');
+
+    if (!firstName || !lastName || !email || !phone) {
+      msgEl.style.display = 'block';
+      msgEl.style.background = 'rgba(255,80,80,0.1)';
+      msgEl.style.border = '1px solid rgba(255,80,80,0.3)';
+      msgEl.style.color = '#ff5050';
+      msgEl.textContent = 'Please fill in all required fields.';
+      return;
+    }
+
+    msgEl.style.display = 'block';
+    msgEl.style.background = 'rgba(0,230,118,0.08)';
+    msgEl.style.border = '1px solid rgba(0,230,118,0.25)';
+    msgEl.style.color = '#00e676';
+    msgEl.textContent = 'Thank you, ' + firstName + '! We will reach out within 24 hours to schedule your strategy call.';
+
+    document.getElementById('firstName').value = '';
+    document.getElementById('lastName').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('phone').value = '';
+    document.getElementById('insuranceType').value = '';
+    document.getElementById('leadCount').value = '';
+    document.getElementById('challenge').value = '';
+  }
+
+  // ========== EVENT DELEGATION ==========
+  document.addEventListener('click', function(e) {
+    var el = e.target.closest('[data-nav]');
+    if (el) { navigateTo(el.getAttribute('data-nav')); return; }
+
+    el = e.target.closest('[data-demo]');
+    if (el) { openDemo(el.getAttribute('data-demo')); return; }
+
+    el = e.target.closest('[data-close-demo]');
+    if (el) { closeDemo(el.getAttribute('data-close-demo')); return; }
+
+    el = e.target.closest('[data-faq-toggle]');
+    if (el) { el.classList.toggle('open'); return; }
+
+    el = e.target.closest('[data-submit-form]');
+    if (el) { submitForm(); return; }
+
+    el = e.target.closest('[data-toggle-menu]');
+    if (el) { document.getElementById('navLinks').classList.toggle('open'); return; }
+
+    // Close modal on overlay click
+    if (e.target.classList.contains('modal-overlay')) {
+      e.target.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  });
+
+  // ========== NAVBAR SCROLL ==========
+  window.addEventListener('scroll', function() {
+    var navbar = document.getElementById('navbar');
+    if (window.scrollY > 20) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
+
+  // ========== ESCAPE KEY ==========
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      var modals = document.querySelectorAll('.modal-overlay.active');
+      for (var i = 0; i < modals.length; i++) {
+        modals[i].classList.remove('active');
+      }
+      document.body.style.overflow = '';
+    }
+  });
+
+});
+</script>
+
+</body>
+</html>
