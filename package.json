@@ -1,0 +1,7 @@
+{
+  "name": "bkflow-insurance",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "mkdir -p public && cp index.html public/index.html"
+  }
+}
