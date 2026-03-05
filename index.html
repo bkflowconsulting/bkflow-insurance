@@ -2697,59 +2697,10 @@ body::before {
   <section class="section" style="padding-top: 0;">
     <div class="container">
       <div class="contact-grid">
-        <div class="contact-form-wrapper">
-          <!-- STEP 1: Form -->
-          <div id="contact-step-form">
-            <h3 style="font-size: 1.2rem; margin-bottom: 6px;">Book Your Free Strategy Call</h3>
-            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 24px;">Tell us a bit about your business, then pick a time on the next step.</p>
-            <div class="form-row">
-              <div class="form-group">
-                <label>First Name *</label>
-                <input type="text" placeholder="John" id="firstName">
-              </div>
-              <div class="form-group">
-                <label>Last Name *</label>
-                <input type="text" placeholder="Smith" id="lastName">
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Email *</label>
-              <input type="email" placeholder="john@example.com" id="email">
-            </div>
-            <div class="form-group">
-              <label>Phone Number *</label>
-              <input type="tel" placeholder="(555) 123-4567" id="phone">
-            </div>
-            <div class="form-group">
-              <label>What type of insurance do you sell?</label>
-              <select id="insuranceType">
-                <option value="">Select one...</option>
-                <option value="life">Life Insurance</option>
-                <option value="health">Health Insurance</option>
-                <option value="auto">Auto Insurance</option>
-                <option value="home">Home Insurance</option>
-                <option value="commercial">Commercial Insurance</option>
-                <option value="multi">Multiple Lines</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>What's your biggest challenge right now?</label>
-              <textarea placeholder="Not enough leads, poor follow-up, low close rate, etc." id="challenge"></textarea>
-            </div>
-            <span class="btn-primary btn-green" style="width: 100%; justify-content: center;" onclick="showCalendar()">Next: Pick a Time &rarr;</span>
-            <div id="formMessage" style="margin-top: 16px; display: none; padding: 14px; border-radius: 8px; font-size: 0.9rem; text-align: center;"></div>
-          </div>
-          <!-- STEP 2: Calendar -->
-          <div id="contact-step-calendar" style="display: none;">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-              <span style="font-size: 1.5rem; cursor: pointer;" onclick="showForm()">&#8592;</span>
-              <h3 style="font-size: 1.2rem; margin: 0;">Pick a Time That Works</h3>
-            </div>
-            <div id="calendar-container">
-              <iframe src="https://api.leadconnectorhq.com/widget/booking/JvfkVFRFgqs17MOpj7XR" style="width: 100%; height: 1000px; border: none; border-radius: 12px;" scrolling="yes" id="ghl-calendar"></iframe>
-            </div>
-          </div>
+        <div class="contact-form-wrapper" style="padding: 32px;">
+          <h3 style="font-size: 1.2rem; margin-bottom: 6px;">Book Your Free Strategy Call</h3>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 20px;">Pick a time, fill in your details, and you're booked.</p>
+          <iframe src="https://api.leadconnectorhq.com/widget/booking/JvfkVFRFgqs17MOpj7XR" style="width: 100%; height: 1000px; border: none; border-radius: 12px;" scrolling="yes" id="ghl-calendar"></iframe>
         </div>
         <div class="contact-info-side">
           <div class="contact-info-card">
@@ -3071,53 +3022,6 @@ function toggleFaq(el) {
 }
 
 function showCalendar() {
-  var firstName = document.getElementById('firstName').value.trim();
-  var lastName = document.getElementById('lastName').value.trim();
-  var email = document.getElementById('email').value.trim();
-  var phone = document.getElementById('phone').value.trim();
-  var insuranceType = document.getElementById('insuranceType').value;
-  var challenge = document.getElementById('challenge').value.trim();
-  var msgEl = document.getElementById('formMessage');
-  if (!firstName || !lastName || !email || !phone) {
-    msgEl.style.display = 'block';
-    msgEl.style.background = 'rgba(255,80,80,0.1)';
-    msgEl.style.border = '1px solid rgba(255,80,80,0.3)';
-    msgEl.style.color = '#ff5050';
-    msgEl.textContent = 'Please fill in all required fields.';
-    return;
-  }
-  msgEl.style.display = 'none';
-  var iframe = document.getElementById('ghl-submit-frame');
-  if (!iframe) {
-    iframe = document.createElement('iframe');
-    iframe.id = 'ghl-submit-frame';
-    iframe.name = 'ghl-submit-frame';
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-  }
-  var form = document.createElement('form');
-  form.method = 'POST';
-  form.action = 'https://services.leadconnectorhq.com/hooks/hFTUeULmiE6TvWO46dJV/webhook-trigger/4ea153fe-1bba-4aac-ae54-3746b1318ade';
-  form.target = 'ghl-submit-frame';
-  var fields = {
-    first_name: firstName,
-    last_name: lastName,
-    email: email,
-    phone: phone,
-    insurance_type: insuranceType,
-    challenge: challenge,
-    source: 'bkflow.com contact form'
-  };
-  for (var key in fields) {
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = key;
-    input.value = fields[key];
-    form.appendChild(input);
-  }
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
   document.getElementById('contact-step-form').style.display = 'none';
   document.getElementById('contact-step-calendar').style.display = 'block';
   window.scrollTo(0, 0);
@@ -3128,8 +3032,9 @@ function showForm() {
   document.getElementById('contact-step-form').style.display = 'block';
 }
 
-function submitForm() {
-  showCalendar();
+if (window.location.search.indexOf('booked=true') > -1) {
+  navigateTo('contact');
+  setTimeout(showCalendar, 100);
 }
 
 window.addEventListener('scroll', function() {
