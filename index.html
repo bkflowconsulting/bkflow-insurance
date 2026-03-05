@@ -3087,18 +3087,19 @@ function showCalendar() {
     return;
   }
   msgEl.style.display = 'none';
+  var formData = new URLSearchParams();
+  formData.append('first_name', firstName);
+  formData.append('last_name', lastName);
+  formData.append('email', email);
+  formData.append('phone', phone);
+  formData.append('insurance_type', insuranceType);
+  formData.append('challenge', challenge);
+  formData.append('source', 'bkflow.com contact form');
   fetch('https://services.leadconnectorhq.com/hooks/hFTUeULmiE6TvWO46dJV/webhook-trigger/4ea153fe-1bba-4aac-ae54-3746b1318ade', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      first_name: firstName,
-      last_name: lastName,
-      email: email,
-      phone: phone,
-      insurance_type: insuranceType,
-      challenge: challenge,
-      source: 'bkflow.com contact form'
-    })
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: formData.toString()
   }).catch(function() {});
   document.getElementById('contact-step-form').style.display = 'none';
   document.getElementById('contact-step-calendar').style.display = 'block';
