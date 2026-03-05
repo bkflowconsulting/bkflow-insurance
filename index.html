@@ -2760,7 +2760,7 @@ body::before {
           <div class="contact-info-card">
             <div class="contact-info-icon">&#128231;</div>
             <h4>Email</h4>
-            <p><a href="mailto:BKflowconsulting@gmail.com">BKflowconsulting@gmail.com</a></p>
+            <p><a href="/cdn-cgi/l/email-protection#77353c111b180014181904021b031e191037101a161e1b5914181a"><span class="__cf_email__" data-cfemail="89cbc2efe5e6feeae6e7fafce5fde0e7eec9eee4e8e0e5a7eae6e4">[email&#160;protected]</span></a></p>
           </div>
           <div class="contact-info-card">
             <div class="contact-info-icon">&#9201;</div>
@@ -2823,7 +2823,7 @@ body::before {
       </div>
       <div class="footer-col">
         <h4>Contact</h4>
-        <a href="mailto:BKflowconsulting@gmail.com">BKflowconsulting@gmail.com</a>
+        <a href="/cdn-cgi/l/email-protection#a8eae3cec4c7dfcbc7c6dbddc4dcc1c6cfe8cfc5c9c1c486cbc7c5"><span class="__cf_email__" data-cfemail="c7858ca1aba8b0a4a8a9b4b2abb3aea9a087a0aaa6aeabe9a4a8aa">[email&#160;protected]</span></a>
         <a href="tel:3474766555">(347) 476-6555</a>
         <a onclick="navigateTo('contact')" style="cursor:pointer;">Book a Call</a>
         <a>Long Island, NY</a>
@@ -3027,7 +3027,7 @@ body::before {
 <!-- ============================== -->
 <!--  JAVASCRIPT                    -->
 <!-- ============================== -->
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 function navigateTo(page) {
   var target = document.getElementById('page-' + page);
   if (!target) return;
@@ -3087,20 +3087,37 @@ function showCalendar() {
     return;
   }
   msgEl.style.display = 'none';
-  var formData = new URLSearchParams();
-  formData.append('first_name', firstName);
-  formData.append('last_name', lastName);
-  formData.append('email', email);
-  formData.append('phone', phone);
-  formData.append('insurance_type', insuranceType);
-  formData.append('challenge', challenge);
-  formData.append('source', 'bkflow.com contact form');
-  fetch('https://services.leadconnectorhq.com/hooks/hFTUeULmiE6TvWO46dJV/webhook-trigger/4ea153fe-1bba-4aac-ae54-3746b1318ade', {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: formData.toString()
-  }).catch(function() {});
+  var iframe = document.getElementById('ghl-submit-frame');
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.id = 'ghl-submit-frame';
+    iframe.name = 'ghl-submit-frame';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+  }
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = 'https://services.leadconnectorhq.com/hooks/hFTUeULmiE6TvWO46dJV/webhook-trigger/4ea153fe-1bba-4aac-ae54-3746b1318ade';
+  form.target = 'ghl-submit-frame';
+  var fields = {
+    first_name: firstName,
+    last_name: lastName,
+    email: email,
+    phone: phone,
+    insurance_type: insuranceType,
+    challenge: challenge,
+    source: 'bkflow.com contact form'
+  };
+  for (var key in fields) {
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = key;
+    input.value = fields[key];
+    form.appendChild(input);
+  }
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
   document.getElementById('contact-step-form').style.display = 'none';
   document.getElementById('contact-step-calendar').style.display = 'block';
   window.scrollTo(0, 0);
