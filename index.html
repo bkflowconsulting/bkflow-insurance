@@ -1,4 +1,4 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -156,6 +156,7 @@ body::before {
   border-radius: 8px;
   transition: var(--transition);
   cursor: pointer;
+  text-decoration: none;
 }
 
 .nav-cta:hover {
@@ -242,6 +243,8 @@ body::before {
   font-size: 0.95rem;
   border-radius: 10px;
   transition: var(--transition);
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .btn-primary:hover {
@@ -1915,19 +1918,19 @@ body::before {
 <!--  NAVIGATION                    -->
 <!-- ============================== -->
 <nav class="navbar" id="navbar">
-  <div class="nav-logo" data-nav="home">
+  <div class="nav-logo" onclick="navigateTo('home')" style="cursor:pointer">
     <div class="logo-icon">BK</div>
     BKflow
   </div>
   <div class="nav-links" id="navLinks">
-    <span class="nav-link active" data-page="home" data-nav="home">Home</span>
-    <span class="nav-link" data-page="services" data-nav="services">Services</span>
-    <span class="nav-link" data-page="testimonials" data-nav="testimonials">Testimonials</span>
-    <span class="nav-link" data-page="about" data-nav="about">About</span>
-    <span class="nav-link" data-page="contact" data-nav="contact">Contact</span>
-    <span class="nav-cta" data-nav="contact">Book a Call</span>
+    <span class="nav-link active" data-page="home" onclick="navigateTo('home')">Home</span>
+    <span class="nav-link" data-page="services" onclick="navigateTo('services')">Services</span>
+    <span class="nav-link" data-page="testimonials" onclick="navigateTo('testimonials')">Testimonials</span>
+    <span class="nav-link" data-page="about" onclick="navigateTo('about')">About</span>
+    <span class="nav-link" data-page="contact" onclick="navigateTo('contact')">Contact</span>
+    <span class="nav-cta" onclick="navigateTo('contact')">Book a Call</span>
   </div>
-  <div class="hamburger" id="hamburger" data-toggle-menu>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
     <span></span><span></span><span></span>
   </div>
 </nav>
@@ -1946,8 +1949,8 @@ body::before {
           <h1>Stop Losing Leads.<br>Start <span class="highlight">Closing Policies.</span></h1>
           <p>The all-in-one lead generation and automation system that reactivates your old leads, generates exclusive leads on autopilot, and books appointments — so you close more policies without chasing prospects.</p>
           <div class="hero-buttons">
-            <span class="btn-primary" data-nav="contact">Book Your Strategy Call &rarr;</span>
-            <span class="btn-secondary" data-demo="reactivation">See It In Action &#9654;</span>
+            <span class="btn-primary" onclick="navigateTo('contact')">Book Your Strategy Call &rarr;</span>
+            <span class="btn-secondary" onclick="openDemo('reactivation')">See It In Action &#9654;</span>
           </div>
         </div>
         <div class="hero-visual">
@@ -2079,7 +2082,7 @@ body::before {
         <div class="section-subtitle mx-auto">Watch exactly how each phase works — from lead reactivation to automated referrals. Click any demo to see the full automation flow.</div>
       </div>
       <div class="demos-grid">
-        <div class="demo-card" data-demo="reactivation">
+        <div class="demo-card" onclick="openDemo('reactivation')">
           <div class="demo-card-visual">
             <div class="demo-play-icon">&#9654;</div>
           </div>
@@ -2090,7 +2093,7 @@ body::before {
             <div class="demo-flow">Import &rarr; Tag &rarr; Drip &rarr; Reply &rarr; Book</div>
           </div>
         </div>
-        <div class="demo-card" data-demo="metaads">
+        <div class="demo-card" onclick="openDemo('metaads')">
           <div class="demo-card-visual">
             <div class="demo-play-icon">&#9654;</div>
           </div>
@@ -2101,7 +2104,7 @@ body::before {
             <div class="demo-flow">Ad Click &rarr; SMS (2s) &rarr; Book &rarr; Remind &rarr; Close</div>
           </div>
         </div>
-        <div class="demo-card" data-demo="aiemail">
+        <div class="demo-card" onclick="openDemo('aiemail')">
           <div class="demo-card-visual">
             <div class="demo-play-icon">&#9654;</div>
           </div>
@@ -2112,7 +2115,7 @@ body::before {
             <div class="demo-flow">Research &rarr; Detect Event &rarr; Write &rarr; Send &rarr; Reply</div>
           </div>
         </div>
-        <div class="demo-card" data-demo="referral">
+        <div class="demo-card" onclick="openDemo('referral')">
           <div class="demo-card-visual">
             <div class="demo-play-icon">&#9654;</div>
           </div>
@@ -2226,7 +2229,7 @@ body::before {
           </div>
         </div>
         <div class="pricing-card-footer">
-          <span class="btn-primary btn-green" data-nav="contact" style="width: 100%; justify-content: center;">Book Your Strategy Call &rarr;</span>
+          <span class="btn-primary btn-green" onclick="navigateTo('contact')" style="width: 100%; justify-content: center;">Book Your Strategy Call &rarr;</span>
           <div class="pricing-note">One closed policy ($2K) covers your entire monthly retainer</div>
         </div>
       </div>
@@ -2240,8 +2243,8 @@ body::before {
       <div class="section-title">Ready to Build Your <span class="highlight">Growth System?</span></div>
       <div class="section-subtitle mx-auto">Stop leaving money on the table. Let's build a system that books appointments, closes policies, and grows your book — on autopilot.</div>
       <div class="cta-buttons">
-        <span class="btn-primary" data-nav="contact">Book a Strategy Call &rarr;</span>
-        <span class="btn-secondary" data-demo="reactivation">Watch a Demo &#9654;</span>
+        <span class="btn-primary" onclick="navigateTo('contact')">Book a Strategy Call &rarr;</span>
+        <span class="btn-secondary" onclick="openDemo('reactivation')">Watch a Demo &#9654;</span>
       </div>
     </div>
   </section>
@@ -2272,7 +2275,7 @@ body::before {
           <p>We activate the leads you already own — old spreadsheets, dead CRM contacts, past inquiries. Booked appointments in the first 2 weeks with $0 ad spend.</p>
           <div class="demo-banner">
             <p>&#9654; See this phase in action</p>
-            <span class="btn-primary btn-green" data-demo="reactivation">Watch Demo</span>
+            <span class="btn-primary btn-green" onclick="openDemo('reactivation')">Watch Demo</span>
           </div>
         </div>
         <div class="phase-features">
@@ -2327,7 +2330,7 @@ body::before {
           <p>Targeted paid ads that bring in fresh, qualified prospects every single day. Instant automated follow-up the second they submit.</p>
           <div class="demo-banner">
             <p>&#9654; See this phase in action</p>
-            <span class="btn-primary btn-green" data-demo="metaads">Watch Demo</span>
+            <span class="btn-primary btn-green" onclick="openDemo('metaads')">Watch Demo</span>
           </div>
         </div>
         <div class="phase-features">
@@ -2382,7 +2385,7 @@ body::before {
           <p>AI researches each prospect first, then writes a completely custom email that feels personal — because it is. Not templates. Truly custom outreach at scale.</p>
           <div class="demo-banner">
             <p>&#9654; See this phase in action</p>
-            <span class="btn-primary btn-green" data-demo="aiemail">Watch Demo</span>
+            <span class="btn-primary btn-green" onclick="openDemo('aiemail')">Watch Demo</span>
           </div>
         </div>
         <div class="phase-features">
@@ -2437,7 +2440,7 @@ body::before {
           <p>Every closed deal keeps working — selling more products and generating warm referrals automatically. Your book grows on autopilot after every close.</p>
           <div class="demo-banner">
             <p>&#9654; See this phase in action</p>
-            <span class="btn-primary btn-green" data-demo="referral">Watch Demo</span>
+            <span class="btn-primary btn-green" onclick="openDemo('referral')">Watch Demo</span>
           </div>
         </div>
         <div class="phase-features">
@@ -2494,7 +2497,7 @@ body::before {
       <div class="section-title">Ready to Scale Your <span class="highlight-green">Insurance Business?</span></div>
       <div class="section-subtitle mx-auto">Every phase runs on autopilot once it's live. Let's build your growth engine.</div>
       <div class="cta-buttons">
-        <span class="btn-primary btn-green" data-nav="contact">Book Your Strategy Call &rarr;</span>
+        <span class="btn-primary btn-green" onclick="navigateTo('contact')">Book Your Strategy Call &rarr;</span>
       </div>
     </div>
   </section>
@@ -2570,7 +2573,7 @@ body::before {
           <div class="guarantee-icon" style="font-size: 1.5rem;">&#128640;</div>
           <h3>Want to Be Our Next <span class="highlight">Success Story?</span></h3>
           <p style="margin-bottom: 24px;">We're building case studies with every new client we onboard. Book a strategy call to see how the BKflow system can work for your insurance business.</p>
-          <span class="btn-primary" data-nav="contact">Book Your Strategy Call &rarr;</span>
+          <span class="btn-primary" onclick="navigateTo('contact')">Book Your Strategy Call &rarr;</span>
         </div>
       </div>
 
@@ -2671,7 +2674,7 @@ body::before {
       <div class="section-title">Ready to Grow Your <span class="highlight-green">Book of Business?</span></div>
       <div class="section-subtitle mx-auto">Let's talk about how BKflow can help you close more policies and build a thriving practice.</div>
       <div class="cta-buttons">
-        <span class="btn-primary" data-nav="contact">Book a Strategy Call &rarr;</span>
+        <span class="btn-primary" onclick="navigateTo('contact')">Book a Strategy Call &rarr;</span>
       </div>
     </div>
   </section>
@@ -2687,7 +2690,7 @@ body::before {
     <div class="container">
       <div class="section-label">Get In Touch</div>
       <div class="section-title">Let's Build Your <span class="highlight">Growth System</span></div>
-      <div class="section-subtitle mx-auto">Fill out the form below and we'll reach out within 24 hours to schedule your free strategy call.</div>
+      <div class="section-subtitle mx-auto">Tell us about your business and book a time that works for you. We'll hop on a quick strategy call to see how BKflow can grow your book of business.</div>
     </div>
   </section>
 
@@ -2695,55 +2698,58 @@ body::before {
     <div class="container">
       <div class="contact-grid">
         <div class="contact-form-wrapper">
-          <h3 style="font-size: 1.2rem; margin-bottom: 24px;">Book Your Free Strategy Call</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label>First Name *</label>
-              <input type="text" placeholder="John" id="firstName">
+          <!-- STEP 1: Form -->
+          <div id="contact-step-form">
+            <h3 style="font-size: 1.2rem; margin-bottom: 6px;">Book Your Free Strategy Call</h3>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 24px;">Tell us a bit about your business, then pick a time on the next step.</p>
+            <div class="form-row">
+              <div class="form-group">
+                <label>First Name *</label>
+                <input type="text" placeholder="John" id="firstName">
+              </div>
+              <div class="form-group">
+                <label>Last Name *</label>
+                <input type="text" placeholder="Smith" id="lastName">
+              </div>
             </div>
             <div class="form-group">
-              <label>Last Name *</label>
-              <input type="text" placeholder="Smith" id="lastName">
+              <label>Email *</label>
+              <input type="email" placeholder="john@example.com" id="email">
+            </div>
+            <div class="form-group">
+              <label>Phone Number *</label>
+              <input type="tel" placeholder="(555) 123-4567" id="phone">
+            </div>
+            <div class="form-group">
+              <label>What type of insurance do you sell?</label>
+              <select id="insuranceType">
+                <option value="">Select one...</option>
+                <option value="life">Life Insurance</option>
+                <option value="health">Health Insurance</option>
+                <option value="auto">Auto Insurance</option>
+                <option value="home">Home Insurance</option>
+                <option value="commercial">Commercial Insurance</option>
+                <option value="multi">Multiple Lines</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>What's your biggest challenge right now?</label>
+              <textarea placeholder="Not enough leads, poor follow-up, low close rate, etc." id="challenge"></textarea>
+            </div>
+            <span class="btn-primary btn-green" style="width: 100%; justify-content: center;" onclick="showCalendar()">Next: Pick a Time &rarr;</span>
+            <div id="formMessage" style="margin-top: 16px; display: none; padding: 14px; border-radius: 8px; font-size: 0.9rem; text-align: center;"></div>
+          </div>
+          <!-- STEP 2: Calendar -->
+          <div id="contact-step-calendar" style="display: none;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+              <span style="font-size: 1.5rem; cursor: pointer;" onclick="showForm()">&#8592;</span>
+              <h3 style="font-size: 1.2rem; margin: 0;">Pick a Time That Works</h3>
+            </div>
+            <div id="calendar-container">
+              <iframe src="https://api.leadconnectorhq.com/widget/booking/JvfkVFRFgqs17MOpj7XR" style="width: 100%; height: 700px; border: none; border-radius: 12px;" scrolling="no" id="ghl-calendar"></iframe>
             </div>
           </div>
-          <div class="form-group">
-            <label>Email *</label>
-            <input type="email" placeholder="john@example.com" id="email">
-          </div>
-          <div class="form-group">
-            <label>Phone Number *</label>
-            <input type="tel" placeholder="(555) 123-4567" id="phone">
-          </div>
-          <div class="form-group">
-            <label>What type of insurance do you sell?</label>
-            <select id="insuranceType">
-              <option value="">Select one...</option>
-              <option value="life">Life Insurance</option>
-              <option value="health">Health Insurance</option>
-              <option value="auto">Auto Insurance</option>
-              <option value="home">Home Insurance</option>
-              <option value="commercial">Commercial Insurance</option>
-              <option value="multi">Multiple Lines</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>How many leads are in your current database?</label>
-            <select id="leadCount">
-              <option value="">Select one...</option>
-              <option value="0-500">0 – 500</option>
-              <option value="500-1000">500 – 1,000</option>
-              <option value="1000-5000">1,000 – 5,000</option>
-              <option value="5000+">5,000+</option>
-              <option value="unsure">Not sure</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>What's your biggest challenge right now?</label>
-            <textarea placeholder="Tell us what's holding you back — not enough leads, poor follow-up, low close rate, etc." id="challenge"></textarea>
-          </div>
-          <span class="btn-primary btn-green" style="width: 100%; justify-content: center;" data-submit-form>Submit &amp; Book My Call &rarr;</span>
-          <div id="formMessage" style="margin-top: 16px; display: none; padding: 14px; border-radius: 8px; font-size: 0.9rem; text-align: center;"></div>
         </div>
         <div class="contact-info-side">
           <div class="contact-info-card">
@@ -2763,19 +2769,19 @@ body::before {
           </div>
           <div class="contact-faq">
             <h4>Frequently Asked Questions</h4>
-            <div class="faq-item" data-faq-toggle>
+            <div class="faq-item" onclick="toggleFaq(this)">
               <div class="faq-question">How quickly can I expect results? <span class="arrow">&#9660;</span></div>
               <div class="faq-answer"><p>Most clients see their first booked appointments within 2 weeks from lead reactivation alone — before any ad spend.</p></div>
             </div>
-            <div class="faq-item" data-faq-toggle>
+            <div class="faq-item" onclick="toggleFaq(this)">
               <div class="faq-question">Do I need to have existing leads? <span class="arrow">&#9660;</span></div>
               <div class="faq-answer"><p>It helps, but it's not required. If you have old leads we'll reactivate them first. Either way, Phase 2 paid ads generate fresh leads daily.</p></div>
             </div>
-            <div class="faq-item" data-faq-toggle>
+            <div class="faq-item" onclick="toggleFaq(this)">
               <div class="faq-question">What if I'm not tech savvy? <span class="arrow">&#9660;</span></div>
               <div class="faq-answer"><p>We handle everything — the CRM buildout, automations, ad management, and email campaigns. You just focus on closing policies.</p></div>
             </div>
-            <div class="faq-item" data-faq-toggle>
+            <div class="faq-item" onclick="toggleFaq(this)">
               <div class="faq-question">Is there a long-term contract? <span class="arrow">&#9660;</span></div>
               <div class="faq-answer"><p>No long-term contracts. We offer a 30-day ROI guarantee — if you don't see positive returns, we refund every penny.</p></div>
             </div>
@@ -2794,7 +2800,7 @@ body::before {
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <div class="nav-logo" data-nav="home" style="cursor:pointer;">
+        <div class="nav-logo" onclick="navigateTo('home')" style="cursor:pointer;">
           <div class="logo-icon">BK</div>
           BKflow
         </div>
@@ -2802,24 +2808,24 @@ body::before {
       </div>
       <div class="footer-col">
         <h4>Pages</h4>
-        <a data-nav="home">Home</a>
-        <a data-nav="services">Services</a>
-        <a data-nav="testimonials">Testimonials</a>
-        <a data-nav="about">About</a>
-        <a data-nav="contact">Contact</a>
+        <a onclick="navigateTo('home')">Home</a>
+        <a onclick="navigateTo('services')">Services</a>
+        <a onclick="navigateTo('testimonials')">Testimonials</a>
+        <a onclick="navigateTo('about')">About</a>
+        <a onclick="navigateTo('contact')">Contact</a>
       </div>
       <div class="footer-col">
         <h4>Services</h4>
-        <a data-nav="services">Lead Reactivation</a>
-        <a data-nav="services">Paid Ads</a>
-        <a data-nav="services">AI Email Outreach</a>
-        <a data-nav="services">Cross-Sell & Referrals</a>
+        <a onclick="navigateTo('services')">Lead Reactivation</a>
+        <a onclick="navigateTo('services')">Paid Ads</a>
+        <a onclick="navigateTo('services')">AI Email Outreach</a>
+        <a onclick="navigateTo('services')">Cross-Sell &amp; Referrals</a>
       </div>
       <div class="footer-col">
         <h4>Contact</h4>
         <a href="mailto:BKflowconsulting@gmail.com">BKflowconsulting@gmail.com</a>
         <a href="tel:3474766555">(347) 476-6555</a>
-        <a data-nav="contact">Book a Call</a>
+        <a onclick="navigateTo('contact')" style="cursor:pointer;">Book a Call</a>
         <a>Long Island, NY</a>
       </div>
     </div>
@@ -2837,7 +2843,7 @@ body::before {
 <!-- DEMO 1: Lead Reactivation -->
 <div class="modal-overlay" id="modal-reactivation">
   <div class="modal-content dw">
-    <div class="modal-close" data-close-demo="reactivation">&times;</div>
+    <div class="modal-close" onclick="closeDemo('reactivation')">&times;</div>
     <div class="section-label">Phase 1 — Live Demo</div>
     <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:4px;">Lead Reactivation Flow</h2>
     <p style="font-size:0.85rem;color:var(--text-secondary);">Watch 2,500 dormant leads turn into booked appointments — $0 ad spend.</p>
@@ -2882,7 +2888,7 @@ body::before {
 <!-- DEMO 2: Paid Ads -->
 <div class="modal-overlay" id="modal-metaads">
   <div class="modal-content dw">
-    <div class="modal-close" data-close-demo="metaads">&times;</div>
+    <div class="modal-close" onclick="closeDemo('metaads')">&times;</div>
     <div class="section-label">Phase 2 — Live Demo</div>
     <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:4px;">Paid Ads Autopilot</h2>
     <p style="font-size:0.85rem;color:var(--text-secondary);">From ad click to booked appointment in under 2 minutes — fully automated.</p>
@@ -2925,7 +2931,7 @@ body::before {
 <!-- DEMO 3: AI Email -->
 <div class="modal-overlay" id="modal-aiemail">
   <div class="modal-content dw">
-    <div class="modal-close" data-close-demo="aiemail">&times;</div>
+    <div class="modal-close" onclick="closeDemo('aiemail')">&times;</div>
     <div class="section-label">Phase 3 — Live Demo</div>
     <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:4px;">AI Email Outreach</h2>
     <p style="font-size:0.85rem;color:var(--text-secondary);">AI researches each prospect, then writes a truly personal email — not a template.</p>
@@ -2976,7 +2982,7 @@ body::before {
 <!-- DEMO 4: Referrals -->
 <div class="modal-overlay" id="modal-referral">
   <div class="modal-content dw">
-    <div class="modal-close" data-close-demo="referral">&times;</div>
+    <div class="modal-close" onclick="closeDemo('referral')">&times;</div>
     <div class="section-label">Phase 4 — Live Demo</div>
     <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:4px;">Automated Referral System</h2>
     <p style="font-size:0.85rem;color:var(--text-secondary);">Every closed policy triggers referral asks and cross-sells — automatically.</p>
@@ -3022,126 +3028,115 @@ body::before {
 <!--  JAVASCRIPT                    -->
 <!-- ============================== -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+function navigateTo(page) {
+  var target = document.getElementById('page-' + page);
+  if (!target) return;
+  var pages = document.querySelectorAll('.page');
+  for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
+  target.classList.add('active');
+  var links = document.querySelectorAll('.nav-link');
+  for (var i = 0; i < links.length; i++) links[i].classList.remove('active');
+  var navLink = document.querySelector('.nav-link[data-page="' + page + '"]');
+  if (navLink) navLink.classList.add('active');
+  window.scrollTo(0, 0);
+  document.getElementById('navLinks').classList.remove('open');
+}
 
-  // ========== NAVIGATION ==========
-  function navigateTo(page) {
-    var target = document.getElementById('page-' + page);
-    if (!target) return;
-    var pages = document.querySelectorAll('.page');
-    for (var i = 0; i < pages.length; i++) { pages[i].classList.remove('active'); }
-    target.classList.add('active');
-    var links = document.querySelectorAll('.nav-link');
-    for (var i = 0; i < links.length; i++) { links[i].classList.remove('active'); }
-    var navLink = document.querySelector('.nav-link[data-page="' + page + '"]');
-    if (navLink) navLink.classList.add('active');
-    window.scrollTo(0, 0);
-    document.getElementById('navLinks').classList.remove('open');
+function openDemo(name) {
+  var modal = document.getElementById('modal-' + name);
+  if (!modal) return;
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  var els = modal.querySelectorAll('.demo-b, .demo-le, .demo-typing, .demo-result');
+  for (var i = 0; i < els.length; i++) {
+    els[i].style.animation = 'none';
+    els[i].offsetHeight;
+    els[i].style.animation = '';
   }
+}
 
-  // ========== DEMOS ==========
-  function openDemo(name) {
-    var modal = document.getElementById('modal-' + name);
-    if (!modal) return;
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    var els = modal.querySelectorAll('.demo-b, .demo-le, .demo-typing, .demo-result');
-    for (var i = 0; i < els.length; i++) {
-      els[i].style.animation = 'none';
-      els[i].offsetHeight;
-      els[i].style.animation = '';
-    }
+function closeDemo(name) {
+  var modal = document.getElementById('modal-' + name);
+  if (!modal) return;
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+function toggleFaq(el) {
+  el.classList.toggle('open');
+}
+
+function showCalendar() {
+  var firstName = document.getElementById('firstName').value.trim();
+  var lastName = document.getElementById('lastName').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var phone = document.getElementById('phone').value.trim();
+  var insuranceType = document.getElementById('insuranceType').value;
+  var challenge = document.getElementById('challenge').value.trim();
+  var msgEl = document.getElementById('formMessage');
+  if (!firstName || !lastName || !email || !phone) {
+    msgEl.style.display = 'block';
+    msgEl.style.background = 'rgba(255,80,80,0.1)';
+    msgEl.style.border = '1px solid rgba(255,80,80,0.3)';
+    msgEl.style.color = '#ff5050';
+    msgEl.textContent = 'Please fill in all required fields.';
+    return;
   }
+  msgEl.style.display = 'none';
+  fetch('https://services.leadconnectorhq.com/hooks/hFTUeULmiE6TvWO46dJV/webhook-trigger/4ea153fe-1bba-4aac-ae54-3746b1318ade', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      phone: phone,
+      insurance_type: insuranceType,
+      challenge: challenge,
+      source: 'bkflow.com contact form'
+    })
+  }).catch(function() {});
+  document.getElementById('contact-step-form').style.display = 'none';
+  document.getElementById('contact-step-calendar').style.display = 'block';
+  window.scrollTo(0, 0);
+}
 
-  function closeDemo(name) {
-    var modal = document.getElementById('modal-' + name);
-    if (!modal) return;
-    modal.classList.remove('active');
+function showForm() {
+  document.getElementById('contact-step-calendar').style.display = 'none';
+  document.getElementById('contact-step-form').style.display = 'block';
+}
+
+function submitForm() {
+  showCalendar();
+}
+
+window.addEventListener('scroll', function() {
+  var navbar = document.getElementById('navbar');
+  if (window.scrollY > 20) {
+    navbar.classList.add('scrolled');
+  } else {
+    navbar.classList.remove('scrolled');
+  }
+});
+
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('modal-overlay')) {
+    e.target.classList.remove('active');
     document.body.style.overflow = '';
   }
+});
 
-  // ========== FORM ==========
-  function submitForm() {
-    var firstName = document.getElementById('firstName').value.trim();
-    var lastName = document.getElementById('lastName').value.trim();
-    var email = document.getElementById('email').value.trim();
-    var phone = document.getElementById('phone').value.trim();
-    var msgEl = document.getElementById('formMessage');
-
-    if (!firstName || !lastName || !email || !phone) {
-      msgEl.style.display = 'block';
-      msgEl.style.background = 'rgba(255,80,80,0.1)';
-      msgEl.style.border = '1px solid rgba(255,80,80,0.3)';
-      msgEl.style.color = '#ff5050';
-      msgEl.textContent = 'Please fill in all required fields.';
-      return;
-    }
-
-    msgEl.style.display = 'block';
-    msgEl.style.background = 'rgba(0,230,118,0.08)';
-    msgEl.style.border = '1px solid rgba(0,230,118,0.25)';
-    msgEl.style.color = '#00e676';
-    msgEl.textContent = 'Thank you, ' + firstName + '! We will reach out within 24 hours to schedule your strategy call.';
-
-    document.getElementById('firstName').value = '';
-    document.getElementById('lastName').value = '';
-    document.getElementById('email').value = '';
-    document.getElementById('phone').value = '';
-    document.getElementById('insuranceType').value = '';
-    document.getElementById('leadCount').value = '';
-    document.getElementById('challenge').value = '';
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var modals = document.querySelectorAll('.modal-overlay.active');
+    for (var i = 0; i < modals.length; i++) modals[i].classList.remove('active');
+    document.body.style.overflow = '';
   }
-
-  // ========== EVENT DELEGATION ==========
-  document.addEventListener('click', function(e) {
-    var el = e.target.closest('[data-nav]');
-    if (el) { navigateTo(el.getAttribute('data-nav')); return; }
-
-    el = e.target.closest('[data-demo]');
-    if (el) { openDemo(el.getAttribute('data-demo')); return; }
-
-    el = e.target.closest('[data-close-demo]');
-    if (el) { closeDemo(el.getAttribute('data-close-demo')); return; }
-
-    el = e.target.closest('[data-faq-toggle]');
-    if (el) { el.classList.toggle('open'); return; }
-
-    el = e.target.closest('[data-submit-form]');
-    if (el) { submitForm(); return; }
-
-    el = e.target.closest('[data-toggle-menu]');
-    if (el) { document.getElementById('navLinks').classList.toggle('open'); return; }
-
-    // Close modal on overlay click
-    if (e.target.classList.contains('modal-overlay')) {
-      e.target.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-  });
-
-  // ========== NAVBAR SCROLL ==========
-  window.addEventListener('scroll', function() {
-    var navbar = document.getElementById('navbar');
-    if (window.scrollY > 20) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
-  });
-
-  // ========== ESCAPE KEY ==========
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      var modals = document.querySelectorAll('.modal-overlay.active');
-      for (var i = 0; i < modals.length; i++) {
-        modals[i].classList.remove('active');
-      }
-      document.body.style.overflow = '';
-    }
-  });
-
 });
 </script>
-
 </body>
 </html>
